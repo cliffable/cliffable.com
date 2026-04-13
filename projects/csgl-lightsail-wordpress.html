@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Migrating a WordPress Website to AWS Lightsail | Cliffable</title>
+  <meta name="description" content="Migrating a live WordPress business website to AWS Lightsail with SSL, static IP, DNS, backups and a lower monthly hosting cost.">
+
+  <link rel="stylesheet" href="../styles.css">
+
+  <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+</head>
+<body>
+
+  <header>
+    <div class="container header-inner">
+
+      <div class="logo">
+        <a href="/">
+          <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+        </a>
+      </div>
+
+      <nav class="main-nav">
+        <a href="/projects/">Projects</a>
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h1>Migrating a WordPress Website to AWS Lightsail</h1>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+
+        <h3>Context</h3>
+
+        <div class="content-block">
+          <p>
+            This project was built to migrate a live guitar teaching business website from traditional managed hosting to AWS, with lower ongoing cost and more direct control over the infrastructure.
+            It is a live production site supporting a real business.
+          </p>
+
+          <p>
+            <strong>Live site:</strong>
+            <a href="https://cliffsmithguitarlessons.co.uk" target="_blank" rel="noopener noreferrer">
+              cliffsmithguitarlessons.co.uk
+            </a>
+            (production WordPress site hosted on AWS Lightsail)
+          </p>
+
+          <p><strong>Key constraints:</strong></p>
+          <ul>
+            <li>The site had to remain publicly available during migration, with minimal disruption.</li>
+            <li>HTTPS, email-related DNS records, and redirects all had to keep working correctly after cutover.</li>
+            <li>The solution needed to stay simple enough to manage as a solo operator while still being recoverable.</li>
+          </ul>
+        </div>
+
+        <h3>Architecture</h3>
+
+        <div class="content-block">
+          <div class="project-architecture">
+            <a href="../assets/images/csgl-lightsail-architecture.png" target="_blank" rel="noopener noreferrer">
+              <img
+                src="../assets/images/csgl-lightsail-architecture.png"
+                alt="Architecture diagram showing users reaching a WordPress site hosted on AWS Lightsail with DNS, SSL, static IP and S3 backups"
+                class="architecture-diagram"
+              >
+            </a>
+          </div>
+
+          <p>
+            The website runs on an Amazon Lightsail instance in the London region using a Bitnami WordPress stack.
+          </p>
+          <p>
+            Traffic is directed to the site through DNS, with a static IP attached to the instance so the endpoint remains stable. SSL is configured for HTTPS, and the site is backed up using snapshots and S3-based backups for recovery.
+          </p>
+          <p>
+            This architecture was appropriate because it kept the stack simple while still covering the core production requirements: a fixed public endpoint, encrypted traffic, DNS control, and a practical backup strategy.
+          </p>
+          <p>
+            For a single WordPress business site, Lightsail provided enough flexibility without the overhead of designing a more complex multi-service AWS environment.
+          </p>
+        </div>
+
+        <h3>Key Decisions</h3>
+
+        <div class="content-block">
+          <div class="decision">
+            <p><strong>Use Amazon Lightsail instead of a fully custom EC2-based architecture</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> Lightsail provided a fast, simple way to deploy a production-ready WordPress environment with predictable monthly cost and minimal setup overhead.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Reduced flexibility compared to a custom architecture using EC2, ALB and RDS, and less control over scaling and infrastructure design.</p>
+          </div>
+
+          <div class="decision">
+            <p><strong>Attach a static IP to ensure a stable public endpoint</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> A fixed IP simplifies DNS configuration and ensures the site remains reachable even if the underlying instance is restarted or replaced.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Introduces a small amount of additional infrastructure management and dependency on correct IP association.</p>
+          </div>
+
+          <div class="decision">
+            <p><strong>Implement a layered backup strategy using snapshots and S3</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> Combining Lightsail snapshots with S3 backups provides redundancy and supports recovery from both instance-level and application-level failures.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Adds operational overhead and requires ongoing validation to ensure backups are usable.</p>
+          </div>
+
+          <div class="decision">
+            <p><strong>Maintain direct control of DNS during migration</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> Managing DNS directly allowed precise control over cutover timing and ensured that web traffic, SSL validation, and email records were handled correctly.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Increased complexity during migration and a higher risk of misconfiguration if not handled carefully.</p>
+          </div>
+        </div>
+
+        <h3>Challenges</h3>
+
+        <div class="content-block">
+          <div class="challenge">
+            <p><strong>Preserving DNS and email behaviour during migration</strong></p>
+            <p class="challenge-detail">
+              Migrating the site required more than moving the web server. DNS changes had to preserve existing MX, SPF, DKIM and DMARC records to avoid disrupting email delivery. This required careful validation before and after cutover to ensure both the website and email services continued to function correctly.
+            </p>
+          </div>
+
+          <div class="challenge">
+            <p><strong>Ensuring reliable backup and recovery outside managed hosting</strong></p>
+            <p class="challenge-detail">
+              Moving away from managed hosting meant taking full responsibility for backups and recovery. I implemented a combination of Lightsail snapshots and S3-based backups, and validated that the site could be restored if needed. This shifted the focus from deployment alone to ongoing operational reliability.
+            </p>
+          </div>
+        </div>
+
+        <h3>Cost</h3>
+
+        <div class="content-block">
+          <p><strong>Average monthly infrastructure cost (last 3 months):</strong> ~$4.79/month</p>
+
+          <ul>
+            <li>Lightsail instance → $3.49/month</li>
+            <li>S3 backups → $1.27/month</li>
+            <li>Route 53 → $0.03/month</li>
+          </ul>
+
+          <p>
+            Equivalent AWS cost: ~£3.80/month (at current exchange rates).
+          </p>
+
+          <p><strong>Previous hosting cost:</strong> £94.80/month (incl. VAT)</p>
+          <p><strong>Cost reduction:</strong> ~96%</p>
+
+          <p>
+            Costs are based on real usage over several months in production.
+          </p>
+
+          <p>
+            This project demonstrates how a simple AWS architecture can significantly reduce cost compared to traditional managed hosting while maintaining full control and recoverability.
+          </p>
+        </div>
+
+        <h3>Outcome</h3>
+
+        <div class="content-block">
+          <p>
+            The project successfully moved a live business website onto AWS with HTTPS, DNS, backups and recovery planning in place. It reduced monthly hosting cost significantly while giving me direct control over the platform.
+          </p>
+
+          <ul>
+            <li>The site is live in production on AWS Lightsail.</li>
+            <li>Monthly hosting cost was reduced by ~96% compared with the previous managed hosting setup.</li>
+            <li>The final solution balances simplicity, cost control and practical recoverability.</li>
+          </ul>
+        </div>
+
+        <h3>Next Steps</h3>
+
+        <div class="content-block">
+          <p>
+            Next steps include improving observability, tightening backup validation, and strengthening recovery documentation. As requirements grow, the architecture could evolve beyond Lightsail to a more modular AWS design.
+          </p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      
+      <div class="footer-contact">
+        <p class="footer-heading">Contact</p>
+        <div class="footer-links">
+          <a href="mailto:mailcliffsmith@gmail.com">Email</a>
+          <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/infiniteimprobabilty" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
+
+      <div class="footer-meta">
+        <p>© 2026 Cliff Smith</p>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>
