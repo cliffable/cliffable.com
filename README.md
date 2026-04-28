@@ -1,10 +1,24 @@
 # cliffable.com — Static Site on AWS
 
+![AWS Static Site Architecture](assets/images/cloudfront-s3-static-site-architecture.png)
+
+## Overview
+
+This project demonstrates how to design and deploy a production-style static website on AWS using fully managed services.
+
+It focuses on simplicity, low cost, and scalability, while applying core cloud architecture principles such as secure access, separation of concerns, and global content delivery.
+
+The implementation prioritises clarity and maintainability, making it suitable as both a personal portfolio and a reference architecture.
+
+---
+
 ## Context
 
 This project is my personal portfolio site, built to showcase AWS architecture projects and document real-world systems.
 
-The goal was to create a low-cost, production-style static website using managed AWS services rather than a traditional hosting platform.
+The goal was to create a low-cost, production-style static website architecture using managed AWS services rather than a traditional hosting platform.
+
+---
 
 ## Tech Stack
 
@@ -14,11 +28,11 @@ The goal was to create a low-cost, production-style static website using managed
 - AWS Certificate Manager (ACM)
 - HTML / CSS
 
+---
+
 ## Architecture Overview
 
 High-level architecture of the system:
-
-![Architecture Diagram](assets/images/cloudfront-s3-static-site-architecture.png)
 
 User → Route 53 → CloudFront → S3
 
@@ -27,11 +41,13 @@ User → Route 53 → CloudFront → S3
 - **Route 53** — DNS routing for cliffable.com
 - **ACM (AWS Certificate Manager)** — SSL certificate for HTTPS
 
+---
+
 ## Key Decisions
 
 ### Use S3 for hosting
 - Simple, low-cost static site hosting
-- No server management required
+- No server management required  
 
 **Trade-off:**  
 No server-side logic (purely static)
@@ -41,7 +57,7 @@ No server-side logic (purely static)
 ### Use CloudFront in front of S3
 - HTTPS support
 - Caching for performance
-- Secure access via Origin Access Control (OAC)
+- Secure access via Origin Access Control (OAC)  
 
 **Trade-off:**  
 Added complexity vs direct S3 hosting
@@ -74,7 +90,7 @@ Aligned S3 bucket policy with CloudFront Origin Access Control.
 ACM certificate validation required correct DNS configuration in Route 53.
 
 **Fix:**  
-Used DNS validation and ensured certificate was created in `us-east-1` for CloudFront.
+Used DNS validation and ensured the certificate was created in `us-east-1` for CloudFront.
 
 ---
 
@@ -92,7 +108,7 @@ This architecture runs at extremely low cost:
 
 - S3: minimal (very small storage usage)
 - CloudFront: within free tier at current traffic
-- Route 53: negligible monthly cost
+- Route 53: negligible monthly cost  
 
 Estimated total: **~$0–$1/month**
 
@@ -103,14 +119,14 @@ Estimated total: **~$0–$1/month**
 - Fully serverless static website
 - HTTPS enabled
 - Globally distributed via CDN
-- Low cost and scalable
+- Low cost and scalable  
 
-**Live site:** [https://cliffable.com](https://cliffable.com)
+**Live site:** https://cliffable.com
 
 ---
 
 ## Next Steps
 
 - Add more project pages
-- Improve automation for deployments
+- Improve deployment automation
 - Expand architecture documentation
