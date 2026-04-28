@@ -1,0 +1,116 @@
+# cliffable.com — Static Site on AWS
+
+## Context
+
+This project is my personal portfolio site, built to showcase AWS architecture projects and document real-world systems.
+
+The goal was to create a low-cost, production-style static website using managed AWS services rather than a traditional hosting platform.
+
+## Tech Stack
+
+- Amazon S3
+- Amazon CloudFront
+- Amazon Route 53
+- AWS Certificate Manager (ACM)
+- HTML / CSS
+
+## Architecture Overview
+
+High-level architecture of the system:
+
+![Architecture Diagram](assets/images/cloudfront-s3-static-site-architecture.png)
+
+User → Route 53 → CloudFront → S3
+
+- **Amazon S3** — stores static website files (HTML, CSS, assets)
+- **CloudFront** — CDN for caching, HTTPS, and global delivery
+- **Route 53** — DNS routing for cliffable.com
+- **ACM (AWS Certificate Manager)** — SSL certificate for HTTPS
+
+## Key Decisions
+
+### Use S3 for hosting
+- Simple, low-cost static site hosting
+- No server management required
+
+**Trade-off:**  
+No server-side logic (purely static)
+
+---
+
+### Use CloudFront in front of S3
+- HTTPS support
+- Caching for performance
+- Secure access via Origin Access Control (OAC)
+
+**Trade-off:**  
+Added complexity vs direct S3 hosting
+
+---
+
+### Use Route 53 for DNS
+- Native AWS integration
+- Reliable and scalable
+
+---
+
+### Use ACM for SSL
+- Free SSL certificates
+- Integrated with CloudFront
+
+---
+
+## Challenges
+
+### S3 AccessDenied (403)
+Initially encountered permission errors due to incorrect bucket policy.
+
+**Fix:**  
+Aligned S3 bucket policy with CloudFront Origin Access Control.
+
+---
+
+### Domain & SSL setup
+ACM certificate validation required correct DNS configuration in Route 53.
+
+**Fix:**  
+Used DNS validation and ensured certificate was created in `us-east-1` for CloudFront.
+
+---
+
+### Default root object behaviour
+CloudFront does not automatically map `/projects/` to `/projects/index.html`.
+
+**Fix:**  
+Implemented a CloudFront Function to rewrite requests.
+
+---
+
+## Cost
+
+This architecture runs at extremely low cost:
+
+- S3: minimal (very small storage usage)
+- CloudFront: within free tier at current traffic
+- Route 53: negligible monthly cost
+
+Estimated total: **~$0–$1/month**
+
+---
+
+## Outcome
+
+- Fully serverless static website
+- HTTPS enabled
+- Globally distributed via CDN
+- Low cost and scalable
+
+**Live site:** [https://cliffable.com](https://cliffable.com)
+
+---
+
+## Next Steps
+
+- Add more project pages
+- Improve automation for deployments
+- Expand architecture documentation
