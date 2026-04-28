@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Migrating a WordPress Website to AWS Lightsail | Cliffable</title>
-  <meta name="description" content="Migrating a live WordPress business website to AWS Lightsail with SSL, static IP, DNS, backups and a lower monthly hosting cost.">
+  <title>WordPress on AWS Lightsail | Migration, Backup & Recovery Case Study | Cliffable</title>
+  <meta name="description" content="A real-world WordPress on AWS Lightsail case study covering migration, DNS, SSL, backups, incident recovery and a redesigned snapshot-based backup strategy.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cliffable.com/projects/csgl-lightsail-wordpress.html">
 
   <link rel="stylesheet" href="../styles.css">
 
@@ -12,6 +14,15 @@
   <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-L41X6NGBMK');
+  </script>
 </head>
 <body>
 
@@ -36,19 +47,23 @@
   <main>
     <section class="hero">
       <div class="container">
-        <h1>Migrating a WordPress Website to AWS Lightsail</h1>
+        <h1>WordPress on AWS Lightsail</h1>
+
+        <p>
+          This project documents the migration of a live WordPress business website to AWS Lightsail, including DNS, SSL, static IP configuration, backup design, a real incident, and the redesign of the recovery strategy using automated snapshots.
+        </p>
       </div>
     </section>
 
     <section>
       <div class="container">
 
-        <h3>Context</h3>
+        <h2>Context</h2>
 
         <div class="content-block">
           <p>
             This project was built to migrate a live guitar teaching business website from traditional managed hosting to AWS, with lower ongoing cost and more direct control over the infrastructure.
-            It is a live production site supporting a real business.
+            It is a live production site supporting an active teaching business.
           </p>
 
           <p>
@@ -67,14 +82,14 @@
           </ul>
         </div>
 
-        <h3>Architecture</h3>
+        <h2>Architecture (Initial Design)</h2>
 
         <div class="content-block">
           <div class="project-architecture">
-            <a href="../assets/images/csgl-lightsail-architecture.png" target="_blank" rel="noopener noreferrer">
+            <a href="../assets/images/csgl-lightsail-architecture.png" class="lightbox-trigger">
               <img
                 src="../assets/images/csgl-lightsail-architecture.png"
-                alt="Architecture diagram showing users reaching a WordPress site hosted on AWS Lightsail with DNS, SSL, static IP and S3 backups"
+                alt="AWS Lightsail WordPress architecture with DNS, SSL, static IP and S3 backups"
                 class="architecture-diagram"
               >
             </a>
@@ -94,7 +109,7 @@
           </p>
         </div>
 
-        <h3>Key Decisions</h3>
+        <h2>Key Decisions</h2>
 
         <div class="content-block">
           <div class="decision">
@@ -122,7 +137,7 @@
           </div>
         </div>
 
-        <h3>Challenges</h3>
+        <h2>Challenges</h2>
 
         <div class="content-block">
           <div class="challenge">
@@ -133,26 +148,96 @@
           </div>
 
           <div class="challenge">
-            <p><strong>Ensuring reliable backup and recovery outside managed hosting</strong></p>
+            <p><strong>Managing a self-hosted WordPress stack on AWS</strong></p>
             <p class="challenge-detail">
-              Moving away from managed hosting meant taking full responsibility for backups and recovery. I implemented a combination of Lightsail snapshots and S3-based backups, and validated that the site could be restored if needed. This shifted the focus from deployment alone to ongoing operational reliability.
+              Moving away from managed hosting introduced responsibility for server updates, SSL configuration, redirects and recovery planning. While this provided greater control and significantly reduced cost, it also required a deeper understanding of the underlying Bitnami and Apache configuration.
             </p>
           </div>
         </div>
 
-        <h3>Cost</h3>
+        <h2>Incident and Redesign</h2>
 
         <div class="content-block">
-          <p><strong>Average monthly infrastructure cost (last 3 months):</strong> ~$4.79/month</p>
+          <p>
+            During routine maintenance, a sequence of issues exposed weaknesses in the original backup and recovery approach.
+          </p>
 
+          <p><strong>What happened:</strong></p>
           <ul>
-            <li>Lightsail instance → $3.49/month</li>
-            <li>S3 backups → $1.27/month</li>
-            <li>Route 53 → $0.03/month</li>
+            <li>System update failed due to incorrect /tmp permissions</li>
+            <li>SSL renewal reintroduced conflicting Apache redirect rules</li>
+            <li>Resulting redirect loop took the site offline</li>
           </ul>
 
           <p>
-            Equivalent AWS cost: ~£3.80/month (at current exchange rates).
+            The site was recovered by auditing and correcting configuration across multiple Apache and WordPress files, restoring a stable HTTPS setup with a canonical non-www domain.
+          </p>
+
+          <p><strong>Key failure:</strong></p>
+          <p>
+            A restore test using the existing S3 backup process failed. The process relied on partial backups (database dump + wp-content) and required manual reconstruction of the environment.
+          </p>
+
+          <p>
+            This revealed that the original S3 process was closer to a migration aid than a reliable recovery mechanism.
+          </p>
+        </div>
+
+        <h2>Architecture (Improved Design)</h2>
+
+        <div class="content-block">
+          <div class="project-architecture"><a href="../assets/images/csgl-lightsail-recovery-architecture.png" class="lightbox-trigger">
+              <img
+                src="../assets/images/csgl-lightsail-recovery-architecture.png"
+                alt="AWS Lightsail recovery architecture with automated snapshots, monitoring and alerting"
+                class="architecture-diagram"
+              >
+            </a>
+          </div>
+
+          <p>
+            Following the incident, the architecture was redesigned to use a snapshot-based recovery strategy with automated retention and monitoring.
+          </p>
+
+          <p>
+            This improved approach prioritises fast, reliable recovery and removes the need for manual environment reconstruction.
+          </p>
+        </div>
+
+        <h2>Improved Backup Strategy</h2>
+
+        <div class="content-block">
+          <p>
+            The original S3-based backup system was replaced with a snapshot-based recovery strategy using Amazon Lightsail.
+          </p>
+
+          <p><strong>New approach:</strong></p>
+          <ul>
+            <li>Daily automatic snapshots (7-day rolling window) - Lightsail enforces a 7 day retention period limitation on automatic snapshots</li>
+            <li>Weekly automated snapshots via Lambda (12-month retention, to bypass the above limitation)</li>
+          </ul>
+
+          <p>
+            An EventBridge schedule triggers a Lambda function to create weekly snapshots, with CloudWatch monitoring and SNS email alerts for failure detection.
+          </p>
+
+          <p>
+            This design ensures both short-term recovery and long-term resilience without manual intervention.
+          </p>
+        </div>
+
+        <h2>Cost</h2>
+
+        <div class="content-block">
+          <p><strong>Average monthly infrastructure cost (last 3 months):</strong> ~$4.40/month</p>
+
+          <ul>
+            <li>Lightsail instance → $3.89/month (+ VAT)</li>
+            <li>Route 53 → $0.51/month</li>
+          </ul>
+
+          <p>
+            Equivalent AWS cost: ~£4.10/month (including VAT, at current exchange rates).
           </p>
 
           <p><strong>Previous hosting cost:</strong> £94.80/month (incl. VAT)</p>
@@ -163,25 +248,30 @@
           </p>
 
           <p>
-            This project demonstrates how a simple AWS architecture can significantly reduce cost compared to traditional managed hosting while maintaining full control and recoverability.
+            The redesign improved recoverability without materially changing the overall cost of the platform.
           </p>
         </div>
 
-        <h3>Outcome</h3>
+        <h2>Outcome</h2>
 
         <div class="content-block">
           <p>
-            The project successfully moved a live business website onto AWS with HTTPS, DNS, backups and recovery planning in place. It reduced monthly hosting cost significantly while giving me direct control over the platform.
+            The project successfully moved a live business website onto AWS with HTTPS, DNS and full infrastructure control, reducing hosting cost significantly while maintaining a stable production environment. This case study is part of a broader collection of <a href="/projects/">AWS architecture projects</a>.
+          </p>
+
+          <p>
+            Following a real-world incident, the backup and recovery strategy was redesigned to prioritise fast, reliable restoration using automated snapshots and monitoring.
           </p>
 
           <ul>
             <li>The site is live in production on AWS Lightsail.</li>
             <li>Monthly hosting cost was reduced by ~96% compared with the previous managed hosting setup.</li>
-            <li>The final solution balances simplicity, cost control and practical recoverability.</li>
+            <li>Recovery is now based on automated snapshots with monitoring and alerting in place.</li>
+            <li>The final solution balances simplicity, cost control and operational reliability.</li>
           </ul>
         </div>
 
-        <h3>Next Steps</h3>
+        <h2>Next Steps</h2>
 
         <div class="content-block">
           <p>
@@ -201,7 +291,7 @@
         <div class="footer-links">
           <a href="mailto:mailcliffsmith@gmail.com">Email</a>
           <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="https://github.com/infiniteimprobabilty" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
       </div>
 
@@ -211,6 +301,26 @@
 
     </div>
   </footer>
+  <div id="lightbox" class="lightbox">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+    <script>
+    const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
 
+    lightboxTriggers.forEach(trigger => {
+      trigger.addEventListener('click', event => {
+        event.preventDefault();
+        lightbox.style.display = 'flex';
+        lightboxImg.src = trigger.href;
+      });
+    });
+
+    lightbox.addEventListener('click', () => {
+      lightbox.style.display = 'none';
+      lightboxImg.src = '';
+    });
+  </script>
 </body>
 </html>

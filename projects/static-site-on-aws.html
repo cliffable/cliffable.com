@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Designing and Building a Static Website on AWS | Cliffable</title>
-  <meta name="description" content="Designing and building a static website on AWS using S3, CloudFront, Route 53 and ACM.">
+  <title>Static Website on AWS | S3, CloudFront, Route 53 & ACM | Cliffable</title>
+  <meta name="description" content="How I built and published a static website on AWS using S3, CloudFront, Route 53 and ACM, including architecture, version control, SEO, indexing, key decisions, challenges and costs.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cliffable.com/projects/static-site-on-aws.html">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="../styles.css">
 
@@ -12,6 +18,15 @@
   <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-L41X6NGBMK');
+  </script>
 </head>
 <body>
 
@@ -36,19 +51,23 @@
   <main>
     <section class="hero">
       <div class="container">
-        <h1>Building a Static Website on AWS</h1>
+        <h1>Static Website on AWS (S3 + CloudFront)</h1>
+
+        <p>
+          This project documents how I built, deployed and iterated on a static website on AWS using S3 for storage, CloudFront for content delivery, Route 53 for DNS and ACM for HTTPS. It also covers version control, SEO improvements, search indexing, key decisions, challenges and running costs.
+        </p>
       </div>
     </section>
 
     <section>
       <div class="container">
 
-        <h3>Context</h3>
+        <h2>Context</h2>
 
         <div class="content-block">
           <p>
-            This project was built to host a fast, secure and globally distributed static website on AWS.
-            It is used in production to serve this website.
+            This project was built to create a fast, secure and low-maintenance portfolio site on AWS.
+            It is used in production to serve <a href="/">this website</a>.
           </p>
 
           <p><strong>Key constraints:</strong></p>
@@ -56,17 +75,18 @@
             <li>Keep the architecture simple and low cost</li>
             <li>Serve the site securely over HTTPS</li>
             <li>Maintain minimal operational overhead</li>
+            <li>Make updates easy to manage and recover</li>
           </ul>
         </div>
 
-        <h3>Architecture</h3>
+        <h2>Architecture</h2>
 
         <div class="content-block">
           <div class="project-architecture">
-            <a href="../assets/images/cloudfront-s3-static-site-architecture.png" target="_blank" rel="noopener noreferrer">
+            <a href="../assets/images/cloudfront-s3-static-site-architecture.png" class="lightbox-trigger" title="View full AWS static website architecture diagram">
               <img
                 src="../assets/images/cloudfront-s3-static-site-architecture.png"
-                alt="Architecture diagram showing a static website hosted on AWS using Route 53, CloudFront, S3 and ACM"
+                alt="AWS static website architecture using S3, CloudFront, Route 53 and ACM"
                 class="architecture-diagram"
               >
             </a>
@@ -78,11 +98,15 @@
           </p>
 
           <p>
+            The site itself is built as static HTML and CSS, with updates managed locally and backed up to GitHub before deployment to AWS.
+          </p>
+
+          <p>
             This setup keeps the architecture simple while using managed services for storage, delivery and DNS, reducing operational overhead compared with managing a server-based solution.
           </p>
         </div>
 
-        <h3>Key Decisions</h3>
+        <h2>Key Decisions</h2>
 
         <div class="content-block">
           <div class="decision">
@@ -96,9 +120,21 @@
             <p class="decision-detail"><strong>Why:</strong> It integrates cleanly with AWS resources and makes domain routing straightforward.</p>
             <p class="decision-detail"><strong>Trade-off:</strong> It keeps DNS management inside AWS rather than using an external provider.</p>
           </div>
+
+          <div class="decision">
+            <p><strong>Use Git and GitHub for version control</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> This provides a clear backup and change history for the site, making updates safer and easier to roll back if needed.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> It adds an extra step to the workflow and requires discipline to keep changes committed consistently.</p>
+          </div>
+
+          <div class="decision">
+            <p><strong>Build SEO and indexing into the site structure</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> Clear page titles, meta descriptions, canonical tags and internal linking help search engines understand the site and improve discoverability.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> It adds content and markup decisions that need to be maintained alongside the technical build.</p>
+          </div>
         </div>
 
-        <h3>Challenges</h3>
+        <h2>Challenges</h2>
 
         <div class="content-block">
           <div class="challenge">
@@ -114,12 +150,26 @@
               Configuring ACM, CloudFront and Route 53 in the correct order to enable certificate validation and domain routing.
             </p>
           </div>
+
+          <div class="challenge">
+            <p><strong>Deployment and cache consistency</strong></p>
+            <p class="challenge-detail">
+              Making sure updated HTML, CSS and assets were actually reflected on the live site, including handling CloudFront invalidations and browser caching during testing.
+            </p>
+          </div>
+
+          <div class="challenge">
+            <p><strong>Search visibility and crawl readiness</strong></p>
+            <p class="challenge-detail">
+              Improving page titles, descriptions, canonical tags and internal linking so the site was better structured for indexing and easier for search engines to interpret.
+            </p>
+          </div>
         </div>
 
-        <h3>Cost</h3>
+        <h2>Cost</h2>
 
         <div class="content-block">
-          <p><strong>Estimated monthly infrastructure cost:</strong> ~$0.50 USD (excluding taxes, based on AWS Pricing Calculator and current usage)</p>
+          <p><strong>Estimated monthly infrastructure cost:</strong> ~$0.50 USD (excluding VAT, based on AWS Pricing Calculator and current usage)</p>
 
           <ul>
             <li>Route 53 → ~$0.50 USD fixed monthly cost (hosted zone)</li>
@@ -133,24 +183,26 @@
           </ul>
         </div>
 
-        <h3>Outcome</h3>
+        <h2>Outcome</h2>
 
         <div class="content-block">
           <p>
-            The result is a production-ready static website hosted on AWS with secure HTTPS delivery and global content distribution.
+            The result is a production-ready static website hosted on AWS with secure HTTPS delivery, global content distribution and a simple deployment model.
+            The project also established a GitHub-based backup workflow and a stronger SEO foundation for future growth.
           </p>
 
           <ul>
             <li>The site is simple, fast and low maintenance</li>
-            <li>The project gave me hands-on experience connecting core AWS networking and hosting services</li>
+            <li>The project gave me hands-on experience connecting core AWS networking, delivery and DNS services</li>
+            <li>The site now has a clearer structure for search engines, with indexing and discoverability considered as part of the build</li>
           </ul>
         </div>
 
-        <h3>Next Steps</h3>
+        <h2>Next Steps</h2>
 
         <div class="content-block">
           <p>
-            Expand the site with additional project pages, refine the design, and continue building and documenting real AWS systems with clear architecture diagrams.
+            Expand the site with additional project pages, continue improving internal linking and on-page SEO, and refine the deployment workflow as the portfolio grows.
           </p>
         </div>
 
@@ -158,24 +210,45 @@
     </section>
   </main>
 
-    <footer>
-      <div class="container footer-content">
-        
-        <div class="footer-contact">
-          <p class="footer-heading">Contact</p>
-          <div class="footer-links">
-            <a href="mailto:mailcliffsmith@gmail.com">Email</a>
-            <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            <a href="https://github.com/infiniteimprobabilty" target="_blank" rel="noopener noreferrer">GitHub</a>
-          </div>
+  <footer>
+    <div class="container footer-content">
+      
+      <div class="footer-contact">
+        <p class="footer-heading">Contact</p>
+        <div class="footer-links">
+          <a href="mailto:mailcliffsmith@gmail.com">Email</a>
+          <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
-
-        <div class="footer-meta">
-          <p>© 2026 Cliff Smith</p>
-        </div>
-
       </div>
-    </footer>
 
+      <div class="footer-meta">
+        <p>© 2026 Cliff Smith</p>
+      </div>
+
+    </div>
+  </footer>
+<div id="lightbox" class="lightbox">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+  <script>
+    const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    lightboxTriggers.forEach(trigger => {
+      trigger.addEventListener('click', event => {
+        event.preventDefault();
+        lightbox.style.display = 'flex';
+        lightboxImg.src = trigger.href;
+      });
+    });
+
+    lightbox.addEventListener('click', () => {
+      lightbox.style.display = 'none';
+      lightboxImg.src = '';
+    });
+  </script>
 </body>
 </html>
