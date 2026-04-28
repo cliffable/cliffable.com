@@ -104,13 +104,13 @@ Implemented a CloudFront Function to rewrite requests.
 
 ## Cost
 
-This architecture runs at extremely low cost:
+This architecture runs at very low cost at current usage levels.
 
 - S3: minimal (very small storage usage)
-- CloudFront: within free tier at current traffic
-- Route 53: negligible monthly cost  
+- CloudFront: within free tier at current traffic levels
+- Route 53: ~$0.50/month for hosted zone
 
-Estimated total: **~$0–$1/month**
+Estimated total: **~$0.50–$1/month at low traffic**
 
 ---
 
