@@ -1,0 +1,31 @@
+name: Deploy static site to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::143876479570:role/GitHubActionsDeployCliffable
+          aws-region: eu-west-2
+
+      - name: Sync files to S3
+        run: aws s3 sync . s3://cliffable.com --delete --exclude ".git/*" --exclude ".github/*"
+
+      - name: Invalidate CloudFront cache
+        run: aws cloudfront create-invalidation --distribution-id E23DXCUNR3EV6E --paths "/*"
+        
