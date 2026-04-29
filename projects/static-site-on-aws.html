@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Static Website on AWS | S3, CloudFront, Route 53 & ACM | Cliffable</title>
-  <meta name="description" content="How I built and published a static website on AWS using S3, CloudFront, Route 53 and ACM, including architecture, version control, SEO, indexing, key decisions, challenges and costs.">
+  <meta name="description" content="How I built and automated a static website on AWS using S3, CloudFront, Route 53, ACM, GitHub Actions and OIDC, including architecture, SEO, challenges and costs.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://cliffable.com/projects/static-site-on-aws.html">
 
@@ -54,10 +54,11 @@
         <h1>Static Website on AWS (S3 + CloudFront)</h1>
 
         <p>
-          This project documents how I built, deployed and iterated on a static website on AWS using S3 for storage, CloudFront for content delivery, Route 53 for DNS and ACM for HTTPS. It also covers version control, SEO improvements, search indexing, key decisions, challenges and running costs.
+          This project documents how I built, deployed and iterated on a static website on AWS using S3 for storage, CloudFront for content delivery, Route 53 for DNS and ACM for HTTPS. It also covers automated deployment, version control, SEO improvements, search indexing, key decisions, challenges and running costs.
+        </p>
+
         <p class="project-links">
           <a href="https://github.com/cliffable/cliffable.com" target="_blank" rel="noopener noreferrer">View source on GitHub →</a>
-        </p>
         </p>
       </div>
     </section>
@@ -105,6 +106,10 @@
           </p>
 
           <p>
+            Deployment is automated through GitHub Actions. Changes pushed to the main branch trigger a workflow that syncs the site files to S3 and creates a CloudFront invalidation so updates are published automatically.
+          </p>
+
+          <p>
             This setup keeps the architecture simple while using managed services for storage, delivery and DNS, reducing operational overhead compared with managing a server-based solution.
           </p>
         </div>
@@ -128,6 +133,18 @@
             <p><strong>Use Git and GitHub for version control</strong></p>
             <p class="decision-detail"><strong>Why:</strong> This provides a clear backup and change history for the site, making updates safer and easier to roll back if needed.</p>
             <p class="decision-detail"><strong>Trade-off:</strong> It adds an extra step to the workflow and requires discipline to keep changes committed consistently.</p>
+          </div>
+
+          <div class="decision">
+            <p><strong>Automate deployment with GitHub Actions</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> This removes manual S3 uploads and creates a repeatable deployment workflow from GitHub to AWS.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> It requires additional setup across GitHub Actions, IAM and CloudFront permissions.</p>
+          </div>
+
+          <div class="decision">
+            <p><strong>Use OIDC instead of long-lived AWS access keys</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> OIDC allows GitHub Actions to assume an AWS role securely without storing static AWS credentials in GitHub.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> It is more complex to configure than simple access keys, but provides a stronger security model.</p>
           </div>
 
           <div class="decision">
@@ -162,6 +179,13 @@
           </div>
 
           <div class="challenge">
+            <p><strong>Secure CI/CD permissions</strong></p>
+            <p class="challenge-detail">
+              Configuring GitHub Actions to deploy using OIDC, with an IAM role restricted to the repository, main branch, S3 bucket and CloudFront invalidation permissions required for the site.
+            </p>
+          </div>
+
+          <div class="challenge">
             <p><strong>Search visibility and crawl readiness</strong></p>
             <p class="challenge-detail">
               Improving page titles, descriptions, canonical tags and internal linking so the site was better structured for indexing and easier for search engines to interpret.
@@ -190,13 +214,15 @@
 
         <div class="content-block">
           <p>
-            The result is a production-ready static website hosted on AWS with secure HTTPS delivery, global content distribution and a simple deployment model.
+            The result is a production-ready static website hosted on AWS with secure HTTPS delivery, global content distribution and an automated deployment model.
             The project also established a GitHub-based backup workflow and a stronger SEO foundation for future growth.
           </p>
 
           <ul>
             <li>The site is simple, fast and low maintenance</li>
             <li>The project gave me hands-on experience connecting core AWS networking, delivery and DNS services</li>
+            <li>Deployment is now automated from GitHub to AWS using GitHub Actions</li>
+            <li>The pipeline uses OIDC rather than long-lived AWS access keys</li>
             <li>The site now has a clearer structure for search engines, with indexing and discoverability considered as part of the build</li>
           </ul>
         </div>
@@ -205,7 +231,7 @@
 
         <div class="content-block">
           <p>
-            Expand the site with additional project pages, continue improving internal linking and on-page SEO, and refine the deployment workflow as the portfolio grows.
+            Add a staging environment using a separate branch, S3 bucket, CloudFront distribution and staging subdomain to enable safe testing before production deployment.
           </p>
         </div>
 
