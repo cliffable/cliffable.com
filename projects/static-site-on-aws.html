@@ -83,9 +83,11 @@
           </ul>
         </div>
 
-        <h2>Architecture</h2>
+<h2>Architecture</h2>
 
-        <div class="content-block">
+<div class="content-block">
+  <p><strong>Runtime Architecture</strong></p>
+
           <div class="project-architecture">
             <a href="../assets/images/cloudfront-s3-static-site-architecture.png" class="lightbox-trigger" title="View full AWS static website architecture diagram">
               <img
@@ -102,7 +104,7 @@
           </p>
 
           <p>
-            The site itself is built as static HTML and CSS, with updates managed locally and backed up to GitHub before deployment to AWS.
+            The site is built as static HTML and CSS, with updates managed locally and version-controlled in GitHub before deployment to AWS.
           </p>
 
           <p>
@@ -112,6 +114,25 @@
           <p>
             This setup keeps the architecture simple while using managed services for storage, delivery and DNS, reducing operational overhead compared with managing a server-based solution.
           </p>
+
+          <p style="margin-top: 32px;"><strong>Automated Deployment Pipeline</strong></p>
+
+          <p><strong>Automated Deployment Pipeline</strong></p>
+
+          <div class="project-architecture">
+            <a href="../assets/images/automated-deployment-pipeline.png" class="lightbox-trigger" title="View full automated deployment pipeline diagram">
+              <img
+                src="../assets/images/automated-deployment-pipeline.png"
+                alt="CI/CD pipeline using GitHub Actions and OIDC to deploy a static website to AWS S3 and CloudFront"
+                class="architecture-diagram"
+              >
+            </a>
+          </div>
+
+          <p>
+            This pipeline removes manual S3 uploads and creates a repeatable deployment workflow. GitHub Actions uses OIDC to assume a least-privilege AWS IAM role, then deploys updated site files and invalidates CloudFront so changes are reflected immediately on the live site.
+          </p>
+
         </div>
 
         <h2>Key Decisions</h2>
