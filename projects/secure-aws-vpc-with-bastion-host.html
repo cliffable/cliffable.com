@@ -17,12 +17,12 @@
   <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
 
   <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
+    gtag('config', 'G-L41X6NGBMK');
   </script>
 </head>
 
@@ -158,18 +158,27 @@
         <h2>Cost</h2>
 
         <div class="content-block">
-          <p><strong>Average monthly infrastructure cost:</strong> Lab environment only — not kept running continuously.</p>
+
+          <p>
+            This project was built as a temporary AWS networking lab rather than a continuously running environment, so long-term infrastructure cost optimisation was not a primary focus.
+          </p>
+
+          <p>
+            However, the project reinforced the importance of cost awareness when working with cloud infrastructure. Resources were terminated after testing was complete to avoid unnecessary ongoing charges.
+          </p>
+
+          <p><strong>Main cost considerations:</strong></p>
 
           <ul>
-            <li>Amazon EC2 bastion host → Low cost when using small instance types and stopping when not in use</li>
-            <li>Amazon EC2 private instance → Low cost when using small instance types and stopping when not in use</li>
-            <li>NAT Gateway → Main cost driver if left running</li>
+            <li>Amazon EC2 instances → Small instance types were used for testing purposes only</li>
+            <li>NAT Gateway → Main potential cost driver if left running continuously</li>
             <li>VPC, subnets, route tables and Internet Gateway → No direct hourly charge</li>
           </ul>
 
           <p>
-            Costs are based on a temporary learning lab. In a production environment, NAT Gateway uptime and data processing charges would need to be reviewed carefully.
+            In a production environment, NAT Gateway uptime, data transfer and high-availability design would require more detailed cost analysis.
           </p>
+
         </div>
 
         <!-- OUTCOME -->
