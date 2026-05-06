@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Secure AWS VPC with Bastion Host | Cliffable</title>
+  <meta name="description" content="AWS VPC project using public and private subnets, a bastion host, NAT Gateway, route tables and controlled SSH access to private EC2 instances.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cliffable.com/projects/secure-aws-vpc-with-bastion-host.html">
+
+  <link rel="stylesheet" href="../styles.css">
+
+  <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+</head>
+
+<body>
+
+  <header>
+    <div class="container header-inner">
+
+      <div class="logo">
+        <a href="/">
+          <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+        </a>
+      </div>
+
+      <nav class="main-nav">
+        <a href="/projects/">Projects</a>
+        <a href="/about.html">About</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <div class="container">
+        <h1>Secure AWS VPC with Bastion Host</h1>
+
+        <p>
+          A secure AWS networking project using public and private subnets, a bastion host, NAT Gateway, Internet Gateway and route tables to control access to private EC2 instances.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+
+        <!-- CONTEXT -->
+        <h2>Context</h2>
+
+        <div class="content-block">
+          <p>
+            This project was built as a practical AWS networking lab to understand how secure access to private compute resources can be designed inside a VPC.
+            It is a personal learning project based on a common production architecture pattern.
+          </p>
+
+          <p><strong>Key constraints:</strong></p>
+          <ul>
+            <li>Keep the private EC2 instance inaccessible directly from the public internet.</li>
+            <li>Allow controlled SSH access through a bastion host in the public subnet.</li>
+            <li>Allow the private instance to reach the internet for updates and external services without exposing it to inbound internet traffic.</li>
+          </ul>
+        </div>
+
+        <!-- ARCHITECTURE -->
+        <h2>Architecture</h2>
+
+        <div class="content-block">
+          <div class="project-architecture">
+            <a href="../assets/images/Secure-AWS-VPC-with-bastion-host.png" class="lightbox-trigger">
+              <img
+                src="../assets/images/Secure-AWS-VPC-with-bastion-host.png"
+                alt="Secure AWS VPC architecture diagram with bastion host, public subnet, private subnet, NAT Gateway, Internet Gateway and route tables"
+                class="architecture-diagram"
+              >
+            </a>
+          </div>
+
+          <p>
+            The architecture uses a single VPC divided into a public subnet and a private subnet. The bastion host sits in the public subnet and has both a public and private IP address. The private EC2 instance sits in the private subnet and has only a private IP address.
+          </p>
+
+          <p>
+            Administrative SSH access is routed through the bastion host, rather than exposing the private instance directly. Outbound internet access from the private subnet is handled through a NAT Gateway in the public subnet, which then routes traffic through the Internet Gateway.
+          </p>
+        </div>
+
+        <!-- KEY DECISIONS -->
+        <h2>Key Decisions</h2>
+
+        <div class="content-block">
+
+          <div class="decision">
+            <p><strong>Use a bastion host as the single administrative entry point</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> This allows SSH access to private resources without assigning public IP addresses to those resources.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> The bastion host becomes an important security boundary and must be tightly controlled, monitored and patched.</p>
+          </div>
+
+          <div class="decision">
+            <p><strong>Place application compute resources in a private subnet</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> This reduces attack surface by preventing direct inbound access from the internet.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Additional networking components are required for access, troubleshooting and outbound connectivity.</p>
+          </div>
+
+          <div class="decision">
+            <p><strong>Use a NAT Gateway for outbound internet access from the private subnet</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> Private instances often need to download updates, install packages or call external APIs without being reachable from the internet.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> NAT Gateways add cost and need to be considered carefully in small lab environments.</p>
+          </div>
+
+        </div>
+
+        <!-- CHALLENGES -->
+        <h2>Challenges</h2>
+
+        <div class="content-block">
+
+          <div class="challenge">
+            <p><strong>Understanding why the private instance could not be accessed directly</strong></p>
+            <p class="challenge-detail">
+              The private instance had no public IP address and could not be reached from the internet. The solution was to access it through the bastion host using its private IP address.
+            </p>
+          </div>
+
+          <div class="challenge">
+            <p><strong>Separating inbound access from outbound internet access</strong></p>
+            <p class="challenge-detail">
+              The bastion host and NAT Gateway solve different problems. The bastion host provides controlled inbound administrative access, while the NAT Gateway provides outbound internet access for private resources.
+            </p>
+          </div>
+
+          <div class="challenge">
+            <p><strong>Clarifying route table behaviour</strong></p>
+            <p class="challenge-detail">
+              The project reinforced that route tables are associated with subnets and control where traffic is sent. The public subnet routes internet-bound traffic to the Internet Gateway, while the private subnet routes outbound internet traffic to the NAT Gateway.
+            </p>
+          </div>
+
+        </div>
+
+        <!-- COST -->
+        <h2>Cost</h2>
+
+        <div class="content-block">
+          <p><strong>Average monthly infrastructure cost:</strong> Lab environment only — not kept running continuously.</p>
+
+          <ul>
+            <li>Amazon EC2 bastion host → Low cost when using small instance types and stopping when not in use</li>
+            <li>Amazon EC2 private instance → Low cost when using small instance types and stopping when not in use</li>
+            <li>NAT Gateway → Main cost driver if left running</li>
+            <li>VPC, subnets, route tables and Internet Gateway → No direct hourly charge</li>
+          </ul>
+
+          <p>
+            Costs are based on a temporary learning lab. In a production environment, NAT Gateway uptime and data processing charges would need to be reviewed carefully.
+          </p>
+        </div>
+
+        <!-- OUTCOME -->
+        <h2>Outcome</h2>
+
+        <div class="content-block">
+          <p>
+            The project successfully demonstrated a secure AWS VPC design where private compute resources can be accessed administratively without being exposed directly to the internet.
+          </p>
+
+          <ul>
+            <li>Built a VPC with separate public and private subnets.</li>
+            <li>Configured bastion-based SSH access to a private EC2 instance.</li>
+            <li>Enabled outbound internet access from the private subnet through a NAT Gateway.</li>
+            <li>Improved understanding of route tables, subnet associations and AWS network boundaries.</li>
+          </ul>
+
+          <p>
+            Related projects can be viewed on the
+            <a href="/projects/">AWS architecture projects page</a>.
+          </p>
+        </div>
+
+        <!-- NEXT STEPS -->
+        <h2>Next Steps</h2>
+
+        <div class="content-block">
+          <p>
+            Future improvements could include replacing SSH access with AWS Systems Manager Session Manager, tightening security group rules further, adding VPC Flow Logs, and expanding the design into a multi-AZ architecture for higher availability.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+
+      <div class="footer-contact">
+        <p class="footer-heading">Contact</p>
+
+        <div class="footer-links">
+          <a href="mailto:mailcliffsmith@gmail.com">Email</a>
+          <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
+
+      <div class="footer-meta">
+        <p>© 2026 Cliff Smith</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <div id="lightbox" class="lightbox">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <script>
+    const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    lightboxTriggers.forEach(trigger => {
+      trigger.addEventListener('click', event => {
+        event.preventDefault();
+        lightbox.style.display = 'flex';
+        lightboxImg.src = trigger.href;
+      });
+    });
+
+    lightbox.addEventListener('click', () => {
+      lightbox.style.display = 'none';
+      lightboxImg.src = '';
+    });
+  </script>
+
+</body>
+</html>
