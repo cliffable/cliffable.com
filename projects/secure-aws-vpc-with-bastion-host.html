@@ -67,7 +67,6 @@
         <div class="content-block">
           <p>
             This project was built as a practical AWS networking lab to understand how secure access to private compute resources can be designed inside a VPC.
-            It is a personal learning project based on a common production architecture pattern.
           </p>
 
           <p><strong>Key constraints:</strong></p>
@@ -97,7 +96,7 @@
           </p>
 
           <p>
-            Administrative SSH access is routed through the bastion host, rather than exposing the private instance directly. Outbound internet access from the private subnet is handled through a NAT Gateway in the public subnet, which then routes traffic through the Internet Gateway.
+            Administrative SSH access is routed through the bastion host (via private IP addresses), rather than exposing the private instance directly. Outbound internet access from the private subnet is handled through a NAT Gateway in the public subnet, which then routes traffic through the Internet Gateway.
           </p>
         </div>
 
@@ -132,9 +131,14 @@
         <div class="content-block">
 
           <div class="challenge">
-            <p><strong>Understanding why the private instance could not be accessed directly</strong></p>
+            <p><strong>Understanding why I could not SSH into either instance initially</strong></p>
+
             <p class="challenge-detail">
-              The private instance had no public IP address and could not be reached from the internet. The solution was to access it through the bastion host using its private IP address.
+              Initially I could not SSH into either instance, even from within my AWS account. I learned that EC2 instances are launched without a public IP address by default, even when launched into public subnets.
+            </p>
+
+            <p class="challenge-detail">
+              The private instance had no public IP address and could not be reached from the internet. The solution was to access it through the bastion host using its private IP address, but this was only possible after relaunching the public instance with a public IP address.
             </p>
           </div>
 
