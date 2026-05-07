@@ -140,8 +140,12 @@
             <p class="challenge-detail">
               The private instance had no public IP address and could not be reached from the internet. The solution was to access it through the bastion host using its private IP address, but this was only possible after relaunching the public instance with a public IP address.
             </p>
-          </div>
 
+            <p class="challenge-detail">
+              Security group configuration also played an important role in connectivity. SSH access to the private instance was restricted to traffic originating from the bastion host.
+            </p>
+          </div>
+          
           <div class="challenge">
             <p><strong>Separating inbound access from outbound internet access</strong></p>
             <p class="challenge-detail">
