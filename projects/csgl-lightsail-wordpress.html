@@ -50,7 +50,7 @@
         <h1>WordPress on AWS Lightsail</h1>
 
         <p>
-          This project documents the migration of a live WordPress business website to AWS Lightsail, including DNS, SSL, static IP configuration, backup design, a real incident, and the redesign of the recovery strategy using automated snapshots.
+          This project documents the migration of a live WordPress business website to AWS Lightsail, including DNS, SSL, static IP configuration, backup design, a production incident, and the redesign of the recovery strategy using automated snapshots.
         </p>
       </div>
     </section>
@@ -99,7 +99,7 @@
             The website runs on an Amazon Lightsail instance in the London region using a Bitnami WordPress stack.
           </p>
           <p>
-            Traffic is directed to the site through DNS, with a static IP attached to the instance so the endpoint remains stable. SSL is configured for HTTPS, and the site is backed up using snapshots and S3-based backups for recovery.
+            Traffic is directed to the site through DNS, with a static IP attached to the instance so the endpoint remains stable. SSL was configured for HTTPS, and the original recovery model combined Lightsail snapshots with S3-based backups.
           </p>
           <p>
             This architecture was appropriate because it kept the stack simple while still covering the core production requirements: a fixed public endpoint, encrypted traffic, DNS control, and a practical backup strategy.
@@ -125,8 +125,8 @@
           </div>
 
           <div class="decision">
-            <p><strong>Implement a layered backup strategy using snapshots and S3</strong></p>
-            <p class="decision-detail"><strong>Why:</strong> Combining Lightsail snapshots with S3 backups provides redundancy and supports recovery from both instance-level and application-level failures.</p>
+            <p><strong>Implement an initial layered backup strategy using snapshots and S3</strong></p>
+            <p class="decision-detail"><strong>Why:</strong> The initial design combined Lightsail snapshots with S3 backups to provide redundancy and support recovery from both instance-level and application-level failures.</p>
             <p class="decision-detail"><strong>Trade-off:</strong> Adds operational overhead and requires ongoing validation to ensure backups are usable.</p>
           </div>
 
@@ -213,7 +213,7 @@
 
           <p><strong>New approach:</strong></p>
           <ul>
-            <li>Daily automatic snapshots (7-day rolling window) - Lightsail enforces a 7 day retention period limitation on automatic snapshots</li>
+            <li>Daily automatic snapshots (7-day rolling window — automatic snapshots in Lightsail are limited to 7 days)</li>
             <li>Weekly automated snapshots via Lambda (12-month retention, to bypass the above limitation)</li>
           </ul>
 
@@ -226,10 +226,35 @@
           </p>
         </div>
 
+        <h2>Platform Migration</h2>
+
+        <div class="content-block">
+          <p>
+            After AWS announced the retirement of Bitnami-packaged Lightsail blueprints, the site was migrated from the older Bitnami WordPress stack to the official AWS Lightsail WordPress blueprint.
+          </p>
+
+          <p><strong>Migration approach:</strong></p>
+          <ul>
+            <li>Built a new official Lightsail WordPress instance in eu-west-2</li>
+            <li>Migrated the full WordPress site using Duplicator after plugin size limits blocked the initial restore method</li>
+            <li>Reattached the existing production static IP to avoid DNS propagation and preserve mail-related DNS behaviour</li>
+            <li>Reconfigured HTTPS manually using Certbot after Lightsail SSL validation issues</li>
+            <li>Updated the backup Lambda target and verified snapshot automation on the new instance</li>
+          </ul>
+
+          <p>
+            The migration preserved the live domain, Google Workspace mail flow, contact forms, analytics, SSL, backups and rollback capability.
+          </p>
+
+          <p>
+            The final platform now runs on the official AWS Lightsail WordPress blueprint with a simpler recovery model, working automated snapshots and reduced operational complexity.
+          </p>
+        </div>
+
         <h2>Cost</h2>
 
         <div class="content-block">
-          <p><strong>Average monthly infrastructure cost (last 3 months):</strong> ~$4.40/month</p>
+          <p><strong>Typical steady-state infrastructure cost:</strong> ~$4–6/month</p>
 
           <ul>
             <li>Lightsail instance → $3.89/month (+ VAT)</li>
@@ -241,10 +266,10 @@
           </p>
 
           <p><strong>Previous hosting cost:</strong> £94.80/month (incl. VAT)</p>
-          <p><strong>Cost reduction:</strong> ~96%</p>
+          <p><strong>Cost reduction:</strong> ~94-96%</p>
 
           <p>
-            Costs are based on real usage over several months in production.
+            Costs temporarily increased during migration, restore testing and snapshot redesign work due to additional Lightsail instances and snapshots running in parallel.
           </p>
 
           <p>
@@ -256,17 +281,14 @@
 
         <div class="content-block">
           <p>
-            The project successfully moved a live business website onto AWS with HTTPS, DNS and full infrastructure control, reducing hosting cost significantly while maintaining a stable production environment. This case study is part of a broader collection of <a href="/projects/">AWS architecture projects</a>.
-          </p>
-
-          <p>
-            Following a real-world incident, the backup and recovery strategy was redesigned to prioritise fast, reliable restoration using automated snapshots and monitoring.
+            The project successfully moved a live business website onto AWS, improved its recovery model after a real production incident, and later migrated the platform away from the deprecated Bitnami blueprint to the official AWS Lightsail WordPress stack.
           </p>
 
           <ul>
-            <li>The site is live in production on AWS Lightsail.</li>
-            <li>Monthly hosting cost was reduced by ~96% compared with the previous managed hosting setup.</li>
-            <li>Recovery is now based on automated snapshots with monitoring and alerting in place.</li>
+            <li>The site is live in production on the official AWS Lightsail WordPress blueprint.</li>
+            <li>HTTPS, redirects, contact forms, analytics and Google Workspace mail flow are working correctly.</li>
+            <li>Typical monthly hosting cost was reduced by ~94–96% compared with the previous managed hosting setup.</li>
+            <li>Recovery is now based on Lightsail snapshots, automated weekly snapshots and tested rollback workflows.</li>
             <li>The final solution balances simplicity, cost control and operational reliability.</li>
           </ul>
         </div>
