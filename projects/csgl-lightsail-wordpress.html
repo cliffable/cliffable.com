@@ -183,28 +183,37 @@
           </p>
         </div>
 
-        <h2>Architecture (Improved Design)</h2>
+        <h2>Current Production Architecture</h2>
 
         <div class="content-block">
-          <div class="project-architecture"><a href="../assets/images/csgl-lightsail-recovery-architecture.png" class="lightbox-trigger">
+          <div class="project-architecture">
+            <a href="../assets/images/csgl-lightsail-production-architecture.png" class="lightbox-trigger">
               <img
-                src="../assets/images/csgl-lightsail-recovery-architecture.png"
-                alt="AWS Lightsail recovery architecture with automated snapshots, monitoring and alerting"
+                src="../assets/images/csgl-lightsail-production-architecture.png"
+                alt="Current AWS Lightsail WordPress production architecture with monitoring, automated snapshots, rollback recovery and alerting"
                 class="architecture-diagram"
               >
             </a>
           </div>
 
           <p>
-            Following the incident, the architecture was redesigned to use a snapshot-based recovery strategy with automated retention and monitoring.
+            The current production architecture combines AWS Lightsail hosting with automated snapshots, monitoring, alerting and rollback recovery workflows.
           </p>
 
           <p>
-            This improved approach prioritises fast, reliable recovery and removes the need for manual environment reconstruction.
+            The production WordPress site runs on the official AWS Lightsail WordPress blueprint in eu-west-2, using a static IP and DNS-based routing for stable public access.
+          </p>
+
+          <p>
+            Automated daily snapshots provide short-term recovery, while EventBridge-triggered Lambda snapshots provide longer-term retention. CloudWatch alarms, Route 53 health checks and SNS notifications monitor availability and operational health.
+          </p>
+
+          <p>
+            A separate recovery instance workflow allows snapshots to be restored and tested before cutover, reducing operational risk during migration and disaster recovery scenarios.
           </p>
         </div>
 
-        <h2>Improved Backup Strategy</h2>
+        <h2>Recovery & Backup Strategy</h2>
 
         <div class="content-block">
           <p>
@@ -217,15 +226,15 @@
             <li>Weekly automated snapshots via Lambda (12-month retention, to bypass the above limitation)</li>
           </ul>
 
-          <p>
-            An EventBridge schedule triggers a Lambda function to create weekly snapshots, with CloudWatch monitoring and SNS email alerts for failure detection.
-          </p>
+        <p>
+          An EventBridge schedule triggers a Lambda function to create weekly snapshots, with CloudWatch monitoring and SNS email alerts for failure detection.
+        </p>
 
-          <p>
-            This design ensures both short-term recovery and long-term resilience without manual intervention.
-          </p>
+        <p>
+          This design improves both short-term recovery capability and long-term operational resilience without requiring manual intervention.
+        </p>
         </div>
-
+        
         <h2>Platform Migration</h2>
 
         <div class="content-block">
@@ -249,6 +258,34 @@
           <p>
             The final platform now runs on the official AWS Lightsail WordPress blueprint with a simpler recovery model, working automated snapshots and reduced operational complexity.
           </p>
+        </div>
+
+        <h2>Monitoring & Operational Stability</h2>
+
+        <div class="content-block">
+
+          <p>
+            After migration to the official Lightsail WordPress blueprint, the production site experienced intermittent instability caused by memory pressure on a 1 GB instance with no swap configured.
+          </p>
+
+          <p>
+            Investigation showed the issue was most likely caused by temporary RAM exhaustion during periods of increased WordPress, Apache or background maintenance activity.
+          </p>
+
+          <p><strong>Operational improvements implemented:</strong></p>
+
+          <ul>
+            <li>Configured a persistent 1 GB swap file for improved stability under memory pressure</li>
+            <li>Implemented Route 53 HTTPS health checks for external uptime monitoring</li>
+            <li>Added CloudWatch alarms and SNS email notifications for outage detection</li>
+            <li>Added Lightsail alarms for CPU utilisation, burst capacity and status check failures</li>
+            <li>Validated end-to-end alerting using a real Apache outage test</li>
+          </ul>
+
+          <p>
+            These changes improved operational visibility and significantly strengthened the resilience of the production environment.
+          </p>
+
         </div>
 
         <h2>Cost</h2>
@@ -288,17 +325,17 @@
             <li>The site is live in production on the official AWS Lightsail WordPress blueprint.</li>
             <li>HTTPS, redirects, contact forms, analytics and Google Workspace mail flow are working correctly.</li>
             <li>Typical monthly hosting cost was reduced by ~94–96% compared with the previous managed hosting setup.</li>
-            <li>Recovery is now based on Lightsail snapshots, automated weekly snapshots and tested rollback workflows.</li>
-            <li>The final solution balances simplicity, cost control and operational reliability.</li>
+            <li>Recovery and monitoring now include automated snapshots, rollback workflows, Route 53 health checks, CloudWatch alarms and SNS alerting.</li>
+            <li>The platform now balances simplicity, cost control, recoverability and operational reliability.</li>
           </ul>
         </div>
 
         <h2>Next Steps</h2>
 
         <div class="content-block">
-          <p>
-            Next steps include improving observability, tightening backup validation, and strengthening recovery documentation. As requirements grow, the architecture could evolve beyond Lightsail to a more modular AWS design.
-          </p>
+        <p>
+          Future improvements could include infrastructure-as-code deployment, centralized logging, enhanced metrics collection and migration to a more modular multi-service AWS architecture if scaling requirements increase.
+        </p>
         </div>
 
       </div>
