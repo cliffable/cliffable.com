@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AWS Architecture Projects & Cloud Engineering Portfolio | Cliffable</title>
-  <meta name="description" content="Cloud engineering portfolio showcasing AWS architecture projects. Real-world systems built with S3, CloudFront, Route 53 and more, with diagrams, decisions and costs.">
+  <meta name="description"
+    content="Cloud engineering portfolio showcasing AWS architecture projects. Real-world systems built with S3, CloudFront, Route 53 and more, with diagrams, decisions and costs.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://cliffable.com/">
 
@@ -26,12 +28,13 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
     gtag('config', 'G-L41X6NGBMK');
   </script>
 </head>
+
 <body>
   <header>
     <div class="container header-inner">
@@ -44,6 +47,7 @@
 
       <nav class="main-nav">
         <a href="/projects/">Projects</a>
+        <a href="/field-notes/">Field Notes</a>
         <a href="/about.html">About</a>
         <a href="/contact.html">Contact</a>
       </nav>
@@ -51,16 +55,16 @@
     </div>
   </header>
 
-    <!-- Hero -->
+  <!-- Hero -->
   <main>
     <section class="hero">
       <div class="container">
         <h1>Cloud Engineering Portfolio</h1>
         <h2>Real-World Architecture by Cliff Smith</h2>
         <p>
-        Cliffable is a cloud engineering portfolio focused on AWS architecture projects. 
-        Each project documents the design, implementation and trade-offs of real-world systems, 
-        including static websites, WordPress hosting and infrastructure built on AWS.
+          Cliffable is a cloud engineering portfolio focused on AWS architecture projects.
+          Each project documents the design, implementation and trade-offs of real-world systems,
+          including static websites, WordPress hosting and infrastructure built on AWS.
         </p>
         <a class="button" href="/projects/">View All Projects</a>
       </div>
@@ -70,61 +74,68 @@
     <section id="projects">
       <div class="container">
 
-<h2>Featured Projects</h2>
+        <h2>Featured Projects</h2>
 
-<div class="featured-projects-grid">
-  <!-- Project 1 -->
-  <a href="/projects/static-site-on-aws.html" class="project-card-link">
-    <div class="project-card">
-      <h4>Static Website on AWS with Automated CI/CD Pipeline</h4>
+        <div class="featured-projects-grid">
+          <!-- Project 1 -->
+          <a href="/projects/static-site-on-aws.html" class="project-card-link">
+            <div class="project-card">
+              <h4>Static Website on AWS with Automated CI/CD Pipeline</h4>
 
-      <img src="/assets/images/cloudfront-s3-static-site-architecture.png" alt="AWS architecture diagram showing S3 static website hosting with CloudFront and Route 53">
+              <img src="/assets/images/cloudfront-s3-static-site-architecture.png"
+                alt="AWS architecture diagram showing S3 static website hosting with CloudFront and Route 53">
 
-      <p>
-        Designed and deployed a static website on AWS using S3, CloudFront, Route 53, ACM and GitHub Actions, with automated CI/CD, HTTPS and DNS routing.
-      </p>
-    </div>
-  </a>
+              <p>
+                Designed and deployed a static website on AWS using S3, CloudFront, Route 53, ACM and GitHub Actions,
+                with automated CI/CD, HTTPS and DNS routing.
+              </p>
+            </div>
+          </a>
 
-  <!-- Project 2 -->
-  <a href="/projects/csgl-lightsail-wordpress.html" class="project-card-link">
-    <div class="project-card">
-      <h4>Migrating a WordPress Website to AWS Lightsail</h4>
+          <!-- Project 2 -->
+          <a href="/projects/csgl-lightsail-wordpress.html" class="project-card-link">
+            <div class="project-card">
+              <h4>Migrating a WordPress Website to AWS Lightsail</h4>
 
-      <img src="/assets/images/csgl-lightsail-architecture.png" alt="AWS Lightsail WordPress hosting architecture with DNS, SSL, static IP and backups">
+              <img src="/assets/images/csgl-lightsail-architecture.png"
+                alt="AWS Lightsail WordPress hosting architecture with DNS, SSL, static IP and backups">
 
-      <p>
-        Migrated a live business website to AWS Lightsail with HTTPS, static IP, DNS configuration, backups and a 96% reduction in hosting cost.
-      </p>
-    </div>
-  </a>
+              <p>
+                Migrated a live business website to AWS Lightsail with HTTPS, static IP, DNS configuration, backups and
+                a 96% reduction in hosting cost.
+              </p>
+            </div>
+          </a>
 
-  <!-- Project 3 -->
-  <a href="/projects/designing-the-cliffable-brand.html" class="project-card-link">
-    <div class="project-card">
-      <h4>Designing the Cliffable Brand</h4>
+          <!-- Project 3 -->
+          <a href="/projects/designing-the-cliffable-brand.html" class="project-card-link">
+            <div class="project-card">
+              <h4>Designing the Cliffable Brand</h4>
 
-      <img src="/assets/images/cliffable-brand-system.png" alt="Cliffable brand system diagram">
+              <img src="/assets/images/cliffable-brand-system.png" alt="Cliffable brand system diagram">
 
-      <p>
-        Building the Cliffable identity from scratch — domain selection, logo design, and a minimal portfolio website.
-      </p>
-    </div>
-  </a>
+              <p>
+                Building the Cliffable identity from scratch — domain selection, logo design, and a minimal portfolio
+                website.
+              </p>
+            </div>
+          </a>
 
-  <!-- Project 4 -->
-  <a href="/projects/secure-aws-vpc-with-bastion-host.html" class="project-card-link">
-    <div class="project-card">
-      <h4>Secure AWS VPC with Bastion Host</h4>
+          <!-- Project 4 -->
+          <a href="/projects/secure-aws-vpc-with-bastion-host.html" class="project-card-link">
+            <div class="project-card">
+              <h4>Secure AWS VPC with Bastion Host</h4>
 
-      <img src="/assets/images/Secure-AWS-VPC-with-bastion-host.png" alt="AWS VPC architecture with bastion host, private subnet, NAT Gateway and route tables">
+              <img src="/assets/images/Secure-AWS-VPC-with-bastion-host.png"
+                alt="AWS VPC architecture with bastion host, private subnet, NAT Gateway and route tables">
 
-      <p>
-        Designed a secure AWS VPC architecture using public and private subnets, a bastion host, NAT Gateway and route tables to control administrative and outbound network access.
-      </p>
-    </div>
-  </a>
-</div>
+              <p>
+                Designed a secure AWS VPC architecture using public and private subnets, a bastion host, NAT Gateway and
+                route tables to control administrative and outbound network access.
+              </p>
+            </div>
+          </a>
+        </div>
 
       </div>
     </section>
@@ -134,7 +145,8 @@
         <h3>About</h3>
 
         <div class="about-content">
-          <img src="/assets/images/cliff-smith-headshot.jpg" alt="Cliff Smith cloud engineering portfolio headshot" class="about-photo">
+          <img src="/assets/images/cliff-smith-headshot.jpg" alt="Cliff Smith cloud engineering portfolio headshot"
+            class="about-photo">
 
           <div class="about-text">
             <p>
@@ -142,14 +154,16 @@
             </p>
 
             <p>
-              Through hands-on projects, I explore how cloud services fit together in practice — from networking and DNS to scalable, production-ready architectures.
+              Through hands-on projects, I explore how cloud services fit together in practice — from networking and DNS
+              to scalable, production-ready architectures.
             </p>
 
             <p>
               This site documents that journey, with a focus on clarity, structure, and real implementation.
             </p>
             <p>
-              Background in music and education (BMus Hons). AWS Certified Cloud Practitioner, preparing for Solutions Architect (Associate).
+              Background in music and education (BMus Hons). AWS Certified Cloud Practitioner, preparing for Solutions
+              Architect (Associate).
             </p>
           </div>
         </div>
@@ -157,23 +171,25 @@
     </section>
   </main>
 
-<footer>
-  <div class="container footer-content">
-    
-    <div class="footer-contact">
-      <p class="footer-heading">Contact</p>
-      <div class="footer-links">
-        <a href="mailto:mailcliffsmith@gmail.com">Email</a>
-        <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
+  <footer>
+    <div class="container footer-content">
+
+      <div class="footer-contact">
+        <p class="footer-heading">Contact</p>
+        <div class="footer-links">
+          <a href="mailto:mailcliffsmith@gmail.com">Email</a>
+          <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank"
+            rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
       </div>
-    </div>
 
-    <div class="footer-meta">
-      <p>© 2026 Cliff Smith</p>
-    </div>
+      <div class="footer-meta">
+        <p>© 2026 Cliff Smith</p>
+      </div>
 
-  </div>
-</footer>
+    </div>
+  </footer>
 </body>
+
 </html>

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WordPress on AWS Lightsail | Migration, Backup & Recovery Case Study | Cliffable</title>
-  <meta name="description" content="A real-world WordPress on AWS Lightsail case study covering migration, DNS, SSL, backups, incident recovery and a redesigned snapshot-based backup strategy.">
+  <meta name="description"
+    content="A real-world WordPress on AWS Lightsail case study covering migration, DNS, SSL, backups, incident recovery and a redesigned snapshot-based backup strategy.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://cliffable.com/projects/csgl-lightsail-wordpress.html">
 
@@ -18,12 +20,13 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
     gtag('config', 'G-L41X6NGBMK');
   </script>
 </head>
+
 <body>
 
   <header>
@@ -37,6 +40,7 @@
 
       <nav class="main-nav">
         <a href="/projects/">Projects</a>
+        <a href="/field-notes/">Field Notes</a>
         <a href="/about.html">About</a>
         <a href="/contact.html">Contact</a>
       </nav>
@@ -50,7 +54,9 @@
         <h1>WordPress on AWS Lightsail</h1>
 
         <p>
-          This project documents the migration of a live WordPress business website to AWS Lightsail, including DNS, SSL, static IP configuration, backup design, a production incident, and the redesign of the recovery strategy using automated snapshots.
+          This project documents the migration of a live WordPress business website to AWS Lightsail, including DNS,
+          SSL, static IP configuration, backup design, a production incident, and the redesign of the recovery strategy
+          using automated snapshots.
         </p>
       </div>
     </section>
@@ -62,7 +68,8 @@
 
         <div class="content-block">
           <p>
-            This project was built to migrate a live guitar teaching business website from traditional managed hosting to AWS, with lower ongoing cost and more direct control over the infrastructure.
+            This project was built to migrate a live guitar teaching business website from traditional managed hosting
+            to AWS, with lower ongoing cost and more direct control over the infrastructure.
             It is a live production site supporting an active teaching business.
           </p>
 
@@ -78,7 +85,8 @@
           <ul>
             <li>The site had to remain publicly available during migration, with minimal disruption.</li>
             <li>HTTPS, email-related DNS records, and redirects all had to keep working correctly after cutover.</li>
-            <li>The solution needed to stay simple enough to manage as a solo operator while still being recoverable.</li>
+            <li>The solution needed to stay simple enough to manage as a solo operator while still being recoverable.
+            </li>
           </ul>
         </div>
 
@@ -87,25 +95,28 @@
         <div class="content-block">
           <div class="project-architecture">
             <a href="../assets/images/csgl-lightsail-architecture.png" class="lightbox-trigger">
-              <img
-                src="../assets/images/csgl-lightsail-architecture.png"
+              <img src="../assets/images/csgl-lightsail-architecture.png"
                 alt="AWS Lightsail WordPress architecture with DNS, SSL, static IP and S3 backups"
-                class="architecture-diagram"
-              >
+                class="architecture-diagram">
             </a>
           </div>
 
           <p>
-            The website originally ran on an Amazon Lightsail instance in the London region using a Bitnami WordPress stack.
+            The website originally ran on an Amazon Lightsail instance in the London region using a Bitnami WordPress
+            stack.
           </p>
           <p>
-            Traffic is directed to the site through DNS, with a static IP attached to the instance so the endpoint remains stable. SSL was configured for HTTPS, and the original recovery model combined Lightsail snapshots with S3-based backups.
+            Traffic is directed to the site through DNS, with a static IP attached to the instance so the endpoint
+            remains stable. SSL was configured for HTTPS, and the original recovery model combined Lightsail snapshots
+            with S3-based backups.
           </p>
           <p>
-            This architecture was appropriate because it kept the stack simple while still covering the core production requirements: a fixed public endpoint, encrypted traffic, DNS control, and a practical backup strategy.
+            This architecture was appropriate because it kept the stack simple while still covering the core production
+            requirements: a fixed public endpoint, encrypted traffic, DNS control, and a practical backup strategy.
           </p>
           <p>
-            For a single WordPress business site, Lightsail provided enough flexibility without the overhead of designing a more complex multi-service AWS environment.
+            For a single WordPress business site, Lightsail provided enough flexibility without the overhead of
+            designing a more complex multi-service AWS environment.
           </p>
         </div>
 
@@ -114,26 +125,35 @@
         <div class="content-block">
           <div class="decision">
             <p><strong>Use Amazon Lightsail instead of a fully custom EC2-based architecture</strong></p>
-            <p class="decision-detail"><strong>Why:</strong> Lightsail provided a fast, simple way to deploy a production-ready WordPress environment with predictable monthly cost and minimal setup overhead.</p>
-            <p class="decision-detail"><strong>Trade-off:</strong> Reduced flexibility compared to a custom architecture using EC2, ALB and RDS, and less control over scaling and infrastructure design.</p>
+            <p class="decision-detail"><strong>Why:</strong> Lightsail provided a fast, simple way to deploy a
+              production-ready WordPress environment with predictable monthly cost and minimal setup overhead.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Reduced flexibility compared to a custom architecture
+              using EC2, ALB and RDS, and less control over scaling and infrastructure design.</p>
           </div>
 
           <div class="decision">
             <p><strong>Attach a static IP to ensure a stable public endpoint</strong></p>
-            <p class="decision-detail"><strong>Why:</strong> A fixed IP simplifies DNS configuration and ensures the site remains reachable even if the underlying instance is restarted or replaced.</p>
-            <p class="decision-detail"><strong>Trade-off:</strong> Introduces a small amount of additional infrastructure management and dependency on correct IP association.</p>
+            <p class="decision-detail"><strong>Why:</strong> A fixed IP simplifies DNS configuration and ensures the
+              site remains reachable even if the underlying instance is restarted or replaced.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Introduces a small amount of additional
+              infrastructure management and dependency on correct IP association.</p>
           </div>
 
           <div class="decision">
             <p><strong>Implement an initial layered backup strategy using snapshots and S3</strong></p>
-            <p class="decision-detail"><strong>Why:</strong> The initial design combined Lightsail snapshots with S3 backups to provide redundancy and support recovery from both instance-level and application-level failures.</p>
-            <p class="decision-detail"><strong>Trade-off:</strong> Adds operational overhead and requires ongoing validation to ensure backups are usable.</p>
+            <p class="decision-detail"><strong>Why:</strong> The initial design combined Lightsail snapshots with S3
+              backups to provide redundancy and support recovery from both instance-level and application-level
+              failures.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Adds operational overhead and requires ongoing
+              validation to ensure backups are usable.</p>
           </div>
 
           <div class="decision">
             <p><strong>Maintain direct control of DNS during migration</strong></p>
-            <p class="decision-detail"><strong>Why:</strong> Managing DNS directly allowed precise control over cutover timing and ensured that web traffic, SSL validation, and email records were handled correctly.</p>
-            <p class="decision-detail"><strong>Trade-off:</strong> Increased complexity during migration and a higher risk of misconfiguration if not handled carefully.</p>
+            <p class="decision-detail"><strong>Why:</strong> Managing DNS directly allowed precise control over cutover
+              timing and ensured that web traffic, SSL validation, and email records were handled correctly.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Increased complexity during migration and a higher
+              risk of misconfiguration if not handled carefully.</p>
           </div>
         </div>
 
@@ -143,14 +163,18 @@
           <div class="challenge">
             <p><strong>Preserving DNS and email behaviour during migration</strong></p>
             <p class="challenge-detail">
-              Migrating the site required more than moving the web server. DNS changes had to preserve existing MX, SPF, DKIM and DMARC records to avoid disrupting email delivery. This required careful validation before and after cutover to ensure both the website and email services continued to function correctly.
+              Migrating the site required more than moving the web server. DNS changes had to preserve existing MX, SPF,
+              DKIM and DMARC records to avoid disrupting email delivery. This required careful validation before and
+              after cutover to ensure both the website and email services continued to function correctly.
             </p>
           </div>
 
           <div class="challenge">
             <p><strong>Managing a self-hosted WordPress stack on AWS</strong></p>
             <p class="challenge-detail">
-              Moving away from managed hosting introduced responsibility for server updates, SSL configuration, redirects and recovery planning. While this provided greater control and significantly reduced cost, it also required a deeper understanding of the underlying Bitnami and Apache configuration.
+              Moving away from managed hosting introduced responsibility for server updates, SSL configuration,
+              redirects and recovery planning. While this provided greater control and significantly reduced cost, it
+              also required a deeper understanding of the underlying Bitnami and Apache configuration.
             </p>
           </div>
         </div>
@@ -159,7 +183,8 @@
 
         <div class="content-block">
           <p>
-            During routine maintenance, a sequence of issues exposed weaknesses in the original backup and recovery approach.
+            During routine maintenance, a sequence of issues exposed weaknesses in the original backup and recovery
+            approach.
           </p>
 
           <p><strong>What happened:</strong></p>
@@ -170,12 +195,14 @@
           </ul>
 
           <p>
-            The site was recovered by auditing and correcting configuration across multiple Apache and WordPress files, restoring a stable HTTPS setup with a canonical non-www domain.
+            The site was recovered by auditing and correcting configuration across multiple Apache and WordPress files,
+            restoring a stable HTTPS setup with a canonical non-www domain.
           </p>
 
           <p><strong>Key failure:</strong></p>
           <p>
-            A restore test using the existing S3 backup process failed. The process relied on partial backups (database dump + wp-content) and required manual reconstruction of the environment.
+            A restore test using the existing S3 backup process failed. The process relied on partial backups (database
+            dump + wp-content) and required manual reconstruction of the environment.
           </p>
 
           <p>
@@ -188,28 +215,31 @@
         <div class="content-block">
           <div class="project-architecture">
             <a href="../assets/images/csgl-lightsail-production-architecture.png" class="lightbox-trigger">
-              <img
-                src="../assets/images/csgl-lightsail-production-architecture.png"
+              <img src="../assets/images/csgl-lightsail-production-architecture.png"
                 alt="Current AWS Lightsail WordPress production architecture with monitoring, automated snapshots, rollback recovery and alerting"
-                class="architecture-diagram"
-              >
+                class="architecture-diagram">
             </a>
           </div>
 
           <p>
-            The current production architecture combines AWS Lightsail hosting with automated snapshots, monitoring, alerting and rollback recovery workflows.
+            The current production architecture combines AWS Lightsail hosting with automated snapshots, monitoring,
+            alerting and rollback recovery workflows.
           </p>
 
           <p>
-            The production WordPress site runs on the official AWS Lightsail WordPress blueprint in eu-west-2, using a static IP and DNS-based routing for stable public access.
+            The production WordPress site runs on the official AWS Lightsail WordPress blueprint in eu-west-2, using a
+            static IP and DNS-based routing for stable public access.
           </p>
 
           <p>
-            Automated daily snapshots provide short-term recovery, while EventBridge-triggered Lambda snapshots provide longer-term retention. CloudWatch alarms, Route 53 health checks and SNS notifications monitor availability and operational health.
+            Automated daily snapshots provide short-term recovery, while EventBridge-triggered Lambda snapshots provide
+            longer-term retention. CloudWatch alarms, Route 53 health checks and SNS notifications monitor availability
+            and operational health.
           </p>
 
           <p>
-            A separate recovery instance workflow allows snapshots to be restored and tested before cutover, reducing operational risk during migration and disaster recovery scenarios.
+            A separate recovery instance workflow allows snapshots to be restored and tested before cutover, reducing
+            operational risk during migration and disaster recovery scenarios.
           </p>
         </div>
 
@@ -217,46 +247,55 @@
 
         <div class="content-block">
           <p>
-            The original S3-based backup system was replaced with a snapshot-based recovery strategy using Amazon Lightsail.
+            The original S3-based backup system was replaced with a snapshot-based recovery strategy using Amazon
+            Lightsail.
           </p>
 
           <p><strong>New approach:</strong></p>
           <ul>
-            <li>Daily automatic snapshots (7-day rolling window — automatic snapshots in Lightsail are limited to 7 days)</li>
+            <li>Daily automatic snapshots (7-day rolling window — automatic snapshots in Lightsail are limited to 7
+              days)</li>
             <li>Weekly automated snapshots via Lambda (12-month retention, to bypass the above limitation)</li>
           </ul>
 
-        <p>
-          An EventBridge schedule triggers a Lambda function to create weekly snapshots, with CloudWatch monitoring and SNS email alerts for failure detection.
-        </p>
+          <p>
+            An EventBridge schedule triggers a Lambda function to create weekly snapshots, with CloudWatch monitoring
+            and SNS email alerts for failure detection.
+          </p>
 
-        <p>
-          This design improves both short-term recovery capability and long-term operational resilience without requiring manual intervention.
-        </p>
+          <p>
+            This design improves both short-term recovery capability and long-term operational resilience without
+            requiring manual intervention.
+          </p>
         </div>
-        
+
         <h2>Platform Migration</h2>
 
         <div class="content-block">
           <p>
-            After AWS announced the retirement of Bitnami-packaged Lightsail blueprints, the site was migrated from the older Bitnami WordPress stack to the official AWS Lightsail WordPress blueprint.
+            After AWS announced the retirement of Bitnami-packaged Lightsail blueprints, the site was migrated from the
+            older Bitnami WordPress stack to the official AWS Lightsail WordPress blueprint.
           </p>
 
           <p><strong>Migration approach:</strong></p>
           <ul>
             <li>Built a new official Lightsail WordPress instance in eu-west-2</li>
-            <li>Migrated the full WordPress site using Duplicator after plugin size limits blocked the initial restore method</li>
-            <li>Reattached the existing production static IP to avoid DNS propagation and preserve mail-related DNS behaviour</li>
+            <li>Migrated the full WordPress site using Duplicator after plugin size limits blocked the initial restore
+              method</li>
+            <li>Reattached the existing production static IP to avoid DNS propagation and preserve mail-related DNS
+              behaviour</li>
             <li>Reconfigured HTTPS manually using Certbot after Lightsail SSL validation issues</li>
             <li>Updated the backup Lambda target and verified snapshot automation on the new instance</li>
           </ul>
 
           <p>
-            The migration preserved the live domain, Google Workspace mail flow, contact forms, analytics, SSL, backups and rollback capability.
+            The migration preserved the live domain, Google Workspace mail flow, contact forms, analytics, SSL, backups
+            and rollback capability.
           </p>
 
           <p>
-            The final platform now runs on the official AWS Lightsail WordPress blueprint with a simpler recovery model, working automated snapshots and reduced operational complexity.
+            The final platform now runs on the official AWS Lightsail WordPress blueprint with a simpler recovery model,
+            working automated snapshots and reduced operational complexity.
           </p>
         </div>
 
@@ -265,11 +304,13 @@
         <div class="content-block">
 
           <p>
-            After migration to the official Lightsail WordPress blueprint, the production site experienced intermittent instability caused by memory pressure on a 1 GB instance with no swap configured.
+            After migration to the official Lightsail WordPress blueprint, the production site experienced intermittent
+            instability caused by memory pressure on a 1 GB instance with no swap configured.
           </p>
 
           <p>
-            Investigation showed the issue was most likely caused by temporary RAM exhaustion during periods of increased WordPress, Apache or background maintenance activity.
+            Investigation showed the issue was most likely caused by temporary RAM exhaustion during periods of
+            increased WordPress, Apache or background maintenance activity.
           </p>
 
           <p><strong>Operational improvements implemented:</strong></p>
@@ -283,7 +324,8 @@
           </ul>
 
           <p>
-            These changes improved operational visibility and significantly strengthened the resilience of the production environment.
+            These changes improved operational visibility and significantly strengthened the resilience of the
+            production environment.
           </p>
 
         </div>
@@ -306,7 +348,8 @@
           <p><strong>Cost reduction:</strong> ~94-96%</p>
 
           <p>
-            Costs temporarily increased during migration, restore testing and snapshot redesign work due to additional Lightsail instances and snapshots running in parallel.
+            Costs temporarily increased during migration, restore testing and snapshot redesign work due to additional
+            Lightsail instances and snapshots running in parallel.
           </p>
 
           <p>
@@ -318,14 +361,18 @@
 
         <div class="content-block">
           <p>
-            The project successfully moved a live business website onto AWS, improved its recovery model after a real production incident, and later migrated the platform away from the deprecated Bitnami blueprint to the official AWS Lightsail WordPress stack.
+            The project successfully moved a live business website onto AWS, improved its recovery model after a real
+            production incident, and later migrated the platform away from the deprecated Bitnami blueprint to the
+            official AWS Lightsail WordPress stack.
           </p>
 
           <ul>
             <li>The site is live in production on the official AWS Lightsail WordPress blueprint.</li>
             <li>HTTPS, redirects, contact forms, analytics and Google Workspace mail flow are working correctly.</li>
-            <li>Typical monthly hosting cost was reduced by ~94–96% compared with the previous managed hosting setup.</li>
-            <li>Recovery and monitoring now include automated snapshots, rollback workflows, Route 53 health checks, CloudWatch alarms and SNS alerting.</li>
+            <li>Typical monthly hosting cost was reduced by ~94–96% compared with the previous managed hosting setup.
+            </li>
+            <li>Recovery and monitoring now include automated snapshots, rollback workflows, Route 53 health checks,
+              CloudWatch alarms and SNS alerting.</li>
             <li>The platform now balances simplicity, cost control, recoverability and operational reliability.</li>
           </ul>
         </div>
@@ -333,9 +380,10 @@
         <h2>Next Steps</h2>
 
         <div class="content-block">
-        <p>
-          Future improvements could include infrastructure-as-code deployment, centralized logging, enhanced metrics collection and migration to a more modular multi-service AWS architecture if scaling requirements increase.
-        </p>
+          <p>
+            Future improvements could include infrastructure-as-code deployment, centralized logging, enhanced metrics
+            collection and migration to a more modular multi-service AWS architecture if scaling requirements increase.
+          </p>
         </div>
 
       </div>
@@ -344,12 +392,13 @@
 
   <footer>
     <div class="container footer-content">
-      
+
       <div class="footer-contact">
         <p class="footer-heading">Contact</p>
         <div class="footer-links">
           <a href="mailto:mailcliffsmith@gmail.com">Email</a>
-          <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank"
+            rel="noopener noreferrer">LinkedIn</a>
           <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
       </div>
@@ -363,7 +412,7 @@
   <div id="lightbox" class="lightbox">
     <img id="lightbox-img" src="" alt="">
   </div>
-    <script>
+  <script>
     const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
@@ -382,4 +431,5 @@
     });
   </script>
 </body>
+
 </html>

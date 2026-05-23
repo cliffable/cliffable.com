@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Secure AWS VPC with Bastion Host | Cliffable</title>
-  <meta name="description" content="AWS VPC project using public and private subnets, a bastion host, NAT Gateway, route tables and controlled SSH access to private EC2 instances.">
+  <meta name="description"
+    content="AWS VPC project using public and private subnets, a bastion host, NAT Gateway, route tables and controlled SSH access to private EC2 instances.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://cliffable.com/projects/secure-aws-vpc-with-bastion-host.html">
 
@@ -20,7 +22,7 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-L41X6NGBMK');
   </script>
@@ -39,6 +41,7 @@
 
       <nav class="main-nav">
         <a href="/projects/">Projects</a>
+        <a href="/field-notes/">Field Notes</a>
         <a href="/about.html">About</a>
         <a href="/contact.html">Contact</a>
       </nav>
@@ -53,7 +56,8 @@
         <h1>Secure AWS VPC with Bastion Host</h1>
 
         <p>
-          A secure AWS networking project using public and private subnets, a bastion host, NAT Gateway, Internet Gateway and route tables to control access to private EC2 instances.
+          A secure AWS networking project using public and private subnets, a bastion host, NAT Gateway, Internet
+          Gateway and route tables to control access to private EC2 instances.
         </p>
       </div>
     </section>
@@ -66,14 +70,16 @@
 
         <div class="content-block">
           <p>
-            This project was built as a practical AWS networking lab to understand how secure access to private compute resources can be designed inside a VPC.
+            This project was built as a practical AWS networking lab to understand how secure access to private compute
+            resources can be designed inside a VPC.
           </p>
 
           <p><strong>Key constraints:</strong></p>
           <ul>
             <li>Keep the private EC2 instance inaccessible directly from the public internet.</li>
             <li>Allow controlled SSH access through a bastion host in the public subnet.</li>
-            <li>Allow the private instance to reach the internet for updates and external services without exposing it to inbound internet traffic.</li>
+            <li>Allow the private instance to reach the internet for updates and external services without exposing it
+              to inbound internet traffic.</li>
           </ul>
         </div>
 
@@ -83,20 +89,22 @@
         <div class="content-block">
           <div class="project-architecture">
             <a href="../assets/images/Secure-AWS-VPC-with-bastion-host.png" class="lightbox-trigger">
-              <img
-                src="../assets/images/Secure-AWS-VPC-with-bastion-host.png"
+              <img src="../assets/images/Secure-AWS-VPC-with-bastion-host.png"
                 alt="Secure AWS VPC architecture diagram with bastion host, public subnet, private subnet, NAT Gateway, Internet Gateway and route tables"
-                class="architecture-diagram"
-              >
+                class="architecture-diagram">
             </a>
           </div>
 
           <p>
-            The architecture uses a single VPC divided into a public subnet and a private subnet. The bastion host sits in the public subnet and has both a public and private IP address. The private EC2 instance sits in the private subnet and has only a private IP address.
+            The architecture uses a single VPC divided into a public subnet and a private subnet. The bastion host sits
+            in the public subnet and has both a public and private IP address. The private EC2 instance sits in the
+            private subnet and has only a private IP address.
           </p>
 
           <p>
-            Administrative SSH access is routed through the bastion host (via private IP addresses), rather than exposing the private instance directly. Outbound internet access from the private subnet is handled through a NAT Gateway in the public subnet, which then routes traffic through the Internet Gateway.
+            Administrative SSH access is routed through the bastion host (via private IP addresses), rather than
+            exposing the private instance directly. Outbound internet access from the private subnet is handled through
+            a NAT Gateway in the public subnet, which then routes traffic through the Internet Gateway.
           </p>
         </div>
 
@@ -107,20 +115,26 @@
 
           <div class="decision">
             <p><strong>Use a bastion host as the single administrative entry point</strong></p>
-            <p class="decision-detail"><strong>Why:</strong> This allows SSH access to private resources without assigning public IP addresses to those resources.</p>
-            <p class="decision-detail"><strong>Trade-off:</strong> The bastion host becomes an important security boundary and must be tightly controlled, monitored and patched.</p>
+            <p class="decision-detail"><strong>Why:</strong> This allows SSH access to private resources without
+              assigning public IP addresses to those resources.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> The bastion host becomes an important security
+              boundary and must be tightly controlled, monitored and patched.</p>
           </div>
 
           <div class="decision">
             <p><strong>Place application compute resources in a private subnet</strong></p>
-            <p class="decision-detail"><strong>Why:</strong> This reduces attack surface by preventing direct inbound access from the internet.</p>
-            <p class="decision-detail"><strong>Trade-off:</strong> Additional networking components are required for access, troubleshooting and outbound connectivity.</p>
+            <p class="decision-detail"><strong>Why:</strong> This reduces attack surface by preventing direct inbound
+              access from the internet.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> Additional networking components are required for
+              access, troubleshooting and outbound connectivity.</p>
           </div>
 
           <div class="decision">
             <p><strong>Use a NAT Gateway for outbound internet access from the private subnet</strong></p>
-            <p class="decision-detail"><strong>Why:</strong> Private instances often need to download updates, install packages or call external APIs without being reachable from the internet.</p>
-            <p class="decision-detail"><strong>Trade-off:</strong> NAT Gateways add cost and need to be considered carefully in small lab environments.</p>
+            <p class="decision-detail"><strong>Why:</strong> Private instances often need to download updates, install
+              packages or call external APIs without being reachable from the internet.</p>
+            <p class="decision-detail"><strong>Trade-off:</strong> NAT Gateways add cost and need to be considered
+              carefully in small lab environments.</p>
           </div>
 
         </div>
@@ -134,29 +148,36 @@
             <p><strong>Understanding why I could not SSH into either instance initially</strong></p>
 
             <p class="challenge-detail">
-              Initially I could not SSH into either instance, even from within my AWS account. I learned that EC2 instances are launched without a public IP address by default, even when launched into public subnets.
+              Initially I could not SSH into either instance, even from within my AWS account. I learned that EC2
+              instances are launched without a public IP address by default, even when launched into public subnets.
             </p>
 
             <p class="challenge-detail">
-              The private instance had no public IP address and could not be reached from the internet. The solution was to access it through the bastion host using its private IP address, but this was only possible after relaunching the public instance with a public IP address.
+              The private instance had no public IP address and could not be reached from the internet. The solution was
+              to access it through the bastion host using its private IP address, but this was only possible after
+              relaunching the public instance with a public IP address.
             </p>
 
             <p class="challenge-detail">
-              Security group configuration also played an important role in connectivity. SSH access to the private instance was restricted to traffic originating from the bastion host.
+              Security group configuration also played an important role in connectivity. SSH access to the private
+              instance was restricted to traffic originating from the bastion host.
             </p>
           </div>
-          
+
           <div class="challenge">
             <p><strong>Separating inbound access from outbound internet access</strong></p>
             <p class="challenge-detail">
-              The bastion host and NAT Gateway solve different problems. The bastion host provides controlled inbound administrative access, while the NAT Gateway provides outbound internet access for private resources.
+              The bastion host and NAT Gateway solve different problems. The bastion host provides controlled inbound
+              administrative access, while the NAT Gateway provides outbound internet access for private resources.
             </p>
           </div>
 
           <div class="challenge">
             <p><strong>Clarifying route table behaviour</strong></p>
             <p class="challenge-detail">
-              The project reinforced that route tables are associated with subnets and control where traffic is sent. The public subnet routes internet-bound traffic to the Internet Gateway, while the private subnet routes outbound internet traffic to the NAT Gateway.
+              The project reinforced that route tables are associated with subnets and control where traffic is sent.
+              The public subnet routes internet-bound traffic to the Internet Gateway, while the private subnet routes
+              outbound internet traffic to the NAT Gateway.
             </p>
           </div>
 
@@ -168,11 +189,13 @@
         <div class="content-block">
 
           <p>
-            This project was built as a temporary AWS networking lab rather than a continuously running environment, so long-term infrastructure cost optimisation was not a primary focus.
+            This project was built as a temporary AWS networking lab rather than a continuously running environment, so
+            long-term infrastructure cost optimisation was not a primary focus.
           </p>
 
           <p>
-            However, the project reinforced the importance of cost awareness when working with cloud infrastructure. Resources were terminated after testing was complete to avoid unnecessary ongoing charges.
+            However, the project reinforced the importance of cost awareness when working with cloud infrastructure.
+            Resources were terminated after testing was complete to avoid unnecessary ongoing charges.
           </p>
 
           <p><strong>Main cost considerations:</strong></p>
@@ -184,7 +207,8 @@
           </ul>
 
           <p>
-            In a production environment, NAT Gateway uptime, data transfer and high-availability design would require more detailed cost analysis.
+            In a production environment, NAT Gateway uptime, data transfer and high-availability design would require
+            more detailed cost analysis.
           </p>
 
         </div>
@@ -194,7 +218,8 @@
 
         <div class="content-block">
           <p>
-            The project successfully demonstrated a secure AWS VPC design where private compute resources can be accessed administratively without being exposed directly to the internet.
+            The project successfully demonstrated a secure AWS VPC design where private compute resources can be
+            accessed administratively without being exposed directly to the internet.
           </p>
 
           <ul>
@@ -202,7 +227,8 @@
             <li>Configured bastion-based SSH access to a private EC2 instance.</li>
             <li>Enabled outbound internet access from the private subnet through a NAT Gateway.</li>
             <li>Verified SSH access to the private instance via the bastion host using private IP addresses.</li>
-            <li>Verified outbound internet connectivity from the private subnet by successfully pinging google.com through the NAT Gateway.</li>
+            <li>Verified outbound internet connectivity from the private subnet by successfully pinging google.com
+              through the NAT Gateway.</li>
             <li>Improved understanding of route tables, subnet associations and AWS network boundaries.</li>
           </ul>
 
@@ -217,7 +243,9 @@
 
         <div class="content-block">
           <p>
-            Future improvements could include replacing SSH access with AWS Systems Manager Session Manager, tightening security group rules further, adding VPC Flow Logs, and expanding the design into a multi-AZ architecture for higher availability.
+            Future improvements could include replacing SSH access with AWS Systems Manager Session Manager, tightening
+            security group rules further, adding VPC Flow Logs, and expanding the design into a multi-AZ architecture
+            for higher availability.
           </p>
         </div>
 
@@ -234,7 +262,8 @@
 
         <div class="footer-links">
           <a href="mailto:mailcliffsmith@gmail.com">Email</a>
-          <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank"
+            rel="noopener noreferrer">LinkedIn</a>
           <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
       </div>
@@ -270,4 +299,5 @@
   </script>
 
 </body>
+
 </html>
