@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+    FIELD NOTE TEMPLATE
+    Duplicate this file for new Field Notes articles.
+    -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>[Field Note Title] | Cliffable</title>
+
+    <meta name="description"
+        content="[Short SEO description of the article.]">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="canonical"
+        href="https://cliffable.com/field-notes/[field-note-file-name].html">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg"
+                        alt="Cliffable logo"
+                        height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/field-notes/">Field Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero field-note-article-hero">
+            <div class="container field-note-container">
+
+                <p class="field-note-article-meta">
+                    [Category] • [Category] • [Category]
+                </p>
+
+                <p class="field-note-date">
+                    Published [Date]
+                </p>
+
+                <h1>[Field Note Title]</h1>
+
+                <p class="field-note-intro">
+                    [Short article summary.]
+                </p>
+
+            </div>
+        </section>
+
+        <!-- FEATURED IMAGE -->
+
+        <section class="field-note-featured-image">
+            <div class="container field-note-container">
+
+                <a href="../assets/images/field-notes/[article-folder]/[hero-image-file]"
+                    class="lightbox-trigger">
+
+                    <img src="../assets/images/field-notes/[article-folder]/[hero-image-file]"
+                        alt="[Featured image description]">
+
+                </a>
+
+                <p class="field-note-image-caption">
+                    [Featured image caption.]
+                </p>
+
+            </div>
+        </section>
+
+        <!-- ARTICLE CONTENT -->
+
+        <section class="field-note-content-section">
+            <div class="container field-note-container">
+
+                <h2>[Section Heading]</h2>
+
+                <p>
+                    [Paragraph text.]
+                </p>
+
+                <p>
+                    [Paragraph text.]
+                </p>
+
+                <ul>
+                    <li>[Bullet point]</li>
+                    <li>[Bullet point]</li>
+                    <li>[Bullet point]</li>
+                </ul>
+
+                <h2>[Section Heading]</h2>
+
+                <p>
+                    [Paragraph text.]
+                </p>
+
+                <!-- OPTIONAL INLINE IMAGE -->
+
+                <div class="field-note-inline-image">
+
+                    <a href="../assets/images/field-notes/[article-folder]/[inline-image-file]"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/field-notes/[article-folder]/[inline-image-file]"
+                            alt="[Inline image description]">
+
+                    </a>
+
+                    <p class="field-note-image-caption">
+                        [Inline image caption.]
+                    </p>
+
+                </div>
+
+                <p>
+                    [Paragraph text.]
+                </p>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    [Conclusion paragraph.]
+                </p>
+
+                <!-- RELATED PROJECT -->
+
+                <h2>Related project</h2>
+
+                <p class="field-note-callout">
+                    This work was implemented as part of the
+                    <a href="../projects/[project-file-name].html">
+                        [Project Name]
+                    </a>
+                    project.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+
+                    <a href="mailto:mailcliffsmith@gmail.com">
+                        Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://github.com/cliffable"
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        GitHub
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+        const lightbox = document.getElementById('lightbox');
+
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+
+                lightbox.style.display = 'flex';
+
+                lightboxImg.src = trigger.href;
+
+            });
+
+        });
+
+        lightbox.addEventListener('click', () => {
+
+            lightbox.style.display = 'none';
+
+            lightboxImg.src = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>

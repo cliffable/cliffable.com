@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Building My First CI/CD Pipeline | Cliffable</title>
+    <meta name="description"
+        content="Field note on building a GitHub Actions CI/CD pipeline to deploy a static AWS website to S3 and invalidate CloudFront.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://cliffable.com/field-notes/building-my-first-cicd-pipeline.html">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+</head>
+
+<body>
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/field-notes/">Field Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <section class="hero field-note-article-hero">
+            <div class="container field-note-container">
+
+                <p class="field-note-article-meta">
+                    AWS • CI/CD • GitHub Actions
+                </p>
+
+                <p class="field-note-date">
+                    Published 23 May 2026
+                </p>
+
+                <h1>Building my first CI/CD pipeline</h1>
+
+                <p class="field-note-intro">
+                    Moving from manual S3 uploads to a GitHub Actions deployment pipeline using OIDC, IAM roles and
+                    CloudFront invalidation.
+                </p>
+
+            </div>
+        </section>
+
+        <section class="field-note-featured-image">
+            <div class="container field-note-container">
+
+                <a href="../assets/images/field-notes/building-my-first-cicd-pipeline/automated-deployment-pipeline.png"
+                    class="lightbox-trigger">
+
+                    <img src="../assets/images/field-notes/building-my-first-cicd-pipeline/automated-deployment-pipeline.png"
+                        alt="GitHub Actions automated deployment pipeline architecture diagram">
+
+                </a>
+
+                <p class="field-note-image-caption">
+                    From local code changes to automated live deployment.
+                </p>
+
+            </div>
+        </section>
+
+        <section class="field-note-content-section">
+            <div class="container field-note-container">
+
+                <h2>The original workflow</h2>
+                <p>
+                    This project started as a way to remove manual deployment steps from the Cliffable static website
+                    workflow.
+                    Previously, changes were uploaded directly to S3 by hand after local testing.
+                </p>
+
+                <p>
+                    While this worked for a small personal site, it quickly became obvious that the process was:
+                </p>
+
+                <ul>
+                    <li>slow</li>
+                    <li>error-prone</li>
+                    <li>difficult to scale</li>
+                    <li>lacking rollback visibility</li>
+                </ul>
+
+                <p>
+                    The goal was to build a lightweight CI/CD pipeline that could automatically deploy changes whenever
+                    code was pushed to the main branch.
+                </p>
+
+                <h2>How the pipeline works</h2>
+                <p>
+                    The automated deployment pipeline connects GitHub, GitHub Actions and AWS into a single workflow
+                    that deploys website updates automatically whenever new code is pushed to the repository.
+                </p>
+                <p>
+                    When code is pushed to the main branch, GitHub Actions automatically triggers a workflow defined
+                    inside the repository. The workflow authenticates to AWS using OpenID Connect (OIDC), temporarily
+                    assumes a tightly scoped IAM role and synchronises the website files to the S3 bucket hosting the
+                    site.
+                </p>
+
+                <p>
+                    After deployment, the workflow creates a CloudFront invalidation so cached files are refreshed
+                    across the CDN. This ensures visitors immediately receive the latest version of the website.
+                </p>
+
+                <h2>Security improvements</h2>
+                <p>
+                    One of the most important improvements was removing long-lived AWS access keys from the deployment
+                    process. Instead of storing permanent credentials inside GitHub, the workflow uses OpenID Connect
+                    (OIDC) to request temporary credentials directly from AWS.
+                </p>
+
+                <div class="field-note-inline-image">
+
+                    <a href="../assets/images/field-notes/building-my-first-cicd-pipeline/github-actions-oidc-permissions.png"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/field-notes/building-my-first-cicd-pipeline/github-actions-oidc-permissions.png"
+                            alt="GitHub Actions deploy.yml permissions block using OIDC authentication">
+
+                    </a>
+
+                    <p class="field-note-image-caption">
+                        GitHub Actions workflow permissions for OIDC authentication.
+                    </p>
+
+                </div>
+
+                <p>
+                    GitHub Actions is allowed to assume a tightly scoped IAM role that only grants permission to deploy
+                    the website and create CloudFront invalidations. Access is further restricted to the Cliffable
+                    repository and the main branch.
+                </p>
+
+                <h2>What I learned</h2>
+                <p>
+                    This project was my first experience building a real CI/CD deployment workflow using GitHub Actions
+                    and AWS. It reinforced how much operational complexity can be removed with relatively simple
+                    automation.
+                </p>
+
+                <p>
+                    It also highlighted the importance of security boundaries in cloud systems. Learning how OIDC trust
+                    relationships, IAM policies and repository restrictions work together gave me a much better
+                    understanding of secure deployment design.
+                </p>
+
+                <p>
+                    Beyond the technical implementation itself, the project changed the way I think about infrastructure
+                    management. Deployments became faster, more repeatable and significantly less stressful than manual
+                    uploads.
+                </p>
+
+                <h2>Conclusion</h2>
+                <p>
+                    Automating deployments removed a large amount of manual operational overhead from the Cliffable
+                    website workflow while also improving security and consistency. It was a relatively small project
+                    technically, but a significant step forward in understanding how modern cloud deployment pipelines
+                    are designed and operated.
+                </p>
+
+                <h2>Related project</h2>
+
+                <p class="field-note-callout">
+                    This deployment pipeline was implemented as part of the
+                    <a href="../projects/csgl-lightsail-wordpress.html">
+                        WordPress on AWS Lightsail
+                    </a>
+                    project.
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+                    <a href="mailto:mailcliffsmith@gmail.com">Email</a>
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank"
+                        rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+            trigger.addEventListener('click', event => {
+                event.preventDefault();
+                lightbox.style.display = 'flex';
+                lightboxImg.src = trigger.href;
+            });
+        });
+
+        lightbox.addEventListener('click', () => {
+            lightbox.style.display = 'none';
+            lightboxImg.src = '';
+        });
+    </script>
+
+</body>
+
+</html>
