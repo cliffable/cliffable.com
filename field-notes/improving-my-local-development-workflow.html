@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Improving My Local Development Workflow | Cliffable</title>
+
+    <meta name="description"
+        content="How Live Server and automatic code formatting improved the speed, structure and efficiency of building Cliffable locally.">
+
+    <meta name="robots" content="index, follow">
+
+    <link rel="canonical" href="https://cliffable.com/field-notes/improving-my-local-development-workflow.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/field-notes/">Field Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <section class="hero field-note-article-hero">
+            <div class="container field-note-container">
+
+                <p class="field-note-article-meta">
+                    VS Code • Workflow • Static Sites
+                </p>
+
+                <p class="field-note-date">
+                    Published 23 May 2026
+                </p>
+
+                <h1>Improving my local development workflow</h1>
+
+                <p class="field-note-intro">
+                    Discovering Live Server and automatic code formatting dramatically improved the speed, structure and
+                    efficiency of building the Cliffable website locally.
+                </p>
+
+            </div>
+        </section>
+
+        <section class="field-note-content-section">
+            <div class="container field-note-container">
+
+                <h2>The original workflow</h2>
+
+                <p>
+                    Early in the Cliffable project, even small changes to the website were surprisingly inefficient to
+                    test.
+                </p>
+
+                <p>
+                    To preview updates properly, I would push changes to GitHub, wait for the GitHub Actions
+                    deployment pipeline to complete, wait for CloudFront invalidation to finish, then refresh the live
+                    site to verify the result.
+                </p>
+
+                <p>
+                    While this worked technically, it created a slow feedback loop that made experimentation and
+                    iteration much harder than necessary.
+                </p>
+
+                <ul>
+                    <li>small visual changes took too long to verify</li>
+                    <li>layout debugging became repetitive</li>
+                    <li>testing spacing and alignment was slow</li>
+                    <li>simple HTML formatting mistakes became difficult to track visually</li>
+                </ul>
+
+                <h2>Discovering Live Server</h2>
+
+                <p>
+                    Installing the Live Server extension for VS Code completely changed the pace of development.
+                </p>
+
+                <p>
+                    Instead of repeatedly deploying changes to AWS just to test them visually, I could now preview
+                    updates instantly in the browser directly from the local project files.
+                </p>
+
+                <section class="field-note-featured-image">
+                    <div class="container field-note-container">
+
+                        <a href="../assets/images/field-notes/improving-my-local-development-workflow/cliffable-live-server-preview.png"
+                            class="lightbox-trigger">
+
+                            <img src="../assets/images/field-notes/improving-my-local-development-workflow/cliffable-live-server-preview.png"
+                                alt="Cliffable website preview running locally with Live Server">
+
+                        </a>
+
+                        <p class="field-note-image-caption">
+                            Live Server preview of the Cliffable website during local development.
+                        </p>
+
+                    </div>
+                </section>
+
+                <p>
+                    The difference was immediate. Instead of waiting through deployment and CDN cache invalidation
+                    cycles, the browser refreshed automatically as soon as files were saved.
+                </p>
+
+                <p>
+                    This made it much easier to experiment with layouts, spacing, typography and navigation structure
+                    while building the site.
+                </p>
+
+                <h2>Discovering automatic code formatting</h2>
+
+                <p>
+                    Another major workflow improvement came from discovering the built-in formatting shortcut in VS Code
+                    using:
+                </p>
+
+                <ul>
+                    <li>Option + Command + F (macOS)</li>
+                </ul>
+
+                <p>
+                    Before this, formatting large HTML sections manually was slow and frustrating. I often found myself
+                    scrolling through long pages trying to line up indentation by hand, especially when moving nested
+                    sections around.
+                </p>
+
+                <p>
+                    Automatically formatting the code instantly restored clean structure and made the HTML much easier
+                    to read and maintain.
+                </p>
+
+                <div class="field-note-inline-image">
+
+                    <a href="../assets/images/field-notes/improving-my-local-development-workflow/vscode-automatic-html-formatting.png"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/field-notes/improving-my-local-development-workflow/vscode-automatic-html-formatting.png"
+                            alt="Automatically formatted HTML structure in Visual Studio Code">
+
+                    </a>
+
+                    <p class="field-note-image-caption">
+                        Automatic formatting restoring clean HTML structure in Visual Studio Code.
+                    </p>
+
+                </div>
+
+                <p>
+                    This reduced a surprising amount of mental overhead during development because I could focus on page
+                    structure and content rather than fighting indentation problems.
+                </p>
+
+                <h2>The combined effect</h2>
+
+                <p>
+                    Individually these seem like small workflow improvements, but together they dramatically changed how
+                    efficiently I could work on the site.
+                </p>
+
+                <p>
+                    The development process became faster, cleaner and much more iterative:
+                </p>
+
+                <ul>
+                    <li>changes could be tested immediately</li>
+                    <li>layout experimentation became easier</li>
+                    <li>HTML structure stayed consistent</li>
+                    <li>less time was wasted on repetitive manual tasks</li>
+                </ul>
+
+                <p>
+                    More importantly, reducing friction in the workflow made it easier to stay focused on the actual
+                    engineering and design decisions rather than constantly managing the mechanics of deployment and
+                    formatting.
+                </p>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    One of the recurring themes while building Cliffable has been discovering how small tooling
+                    improvements can compound into significant workflow gains over time.
+                </p>
+
+                <p>
+                    Better feedback loops, cleaner formatting and faster iteration have made local development far more
+                    efficient, while also making the process of building the site much more enjoyable.
+                </p>
+
+                <h2>Related project</h2>
+
+                <p class="field-note-callout">
+                    This workflow was developed while building the
+                    <a href="../projects/static-site-on-aws.html">
+                        Static Website on AWS
+                    </a>
+                    project.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+
+                    <a href="mailto:mailcliffsmith@gmail.com">
+                        Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">
+                        GitHub
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+        const lightbox = document.getElementById('lightbox');
+
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+
+                lightbox.style.display = 'flex';
+
+                lightboxImg.src = trigger.href;
+
+            });
+
+        });
+
+        lightbox.addEventListener('click', () => {
+
+            lightbox.style.display = 'none';
+
+            lightboxImg.src = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>
+```
