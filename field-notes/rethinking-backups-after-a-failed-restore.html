@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Rethinking Backups After a Failed Restore | Cliffable</title>
+
+    <meta name="description"
+        content="A failed WordPress restore test forced me to rethink my entire backup strategy, simplify recovery procedures, and move towards snapshot-first backups on AWS Lightsail.">
+
+    <meta name="robots" content="index, follow">
+
+    <link rel="canonical" href="https://cliffable.com/field-notes/rethinking-backups-after-a-failed-restore.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+
+        <div class="container header-inner">
+
+            <div class="logo">
+
+                <a href="/">
+
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+
+                </a>
+
+            </div>
+
+            <nav class="main-nav">
+
+                <a href="/projects/">Projects</a>
+
+                <a href="/field-notes/">Field Notes</a>
+
+                <a href="/about.html">About</a>
+
+                <a href="/contact.html">Contact</a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero field-note-article-hero">
+
+            <div class="container field-note-container">
+
+                <p class="field-note-article-meta">
+                    Operations • Backups • AWS
+                </p>
+
+                <p class="field-note-date">
+                    Published May 2026
+                </p>
+
+                <h1>Rethinking Backups After a Failed Restore</h1>
+
+                <p class="field-note-intro">
+                    A failed restore test on a production WordPress backup forced me to rethink my entire backup
+                    strategy. What initially looked like a reliable solution turned out to be fragile, complex and
+                    difficult to recover from under pressure.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- FEATURED IMAGE -->
+
+        <section class="field-note-featured-image">
+
+            <div class="container field-note-container">
+
+                <a href="../assets/images/field-notes/rethinking-backups-after-a-failed-restore/csgl-lightsail-architecture.png"
+                    class="lightbox-trigger">
+
+                    <img src="../assets/images/field-notes/rethinking-backups-after-a-failed-restore/csgl-lightsail-architecture.png"
+                        alt="AWS Lightsail snapshot backup strategy diagram">
+
+                </a>
+
+                <p class="field-note-image-caption">
+                    Original layered backup strategy combining Lightsail snapshots, S3 backups and manual restoration
+                    procedures.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- ARTICLE CONTENT -->
+
+        <section class="field-note-content-section">
+
+            <div class="container field-note-container">
+
+                <h2>The backup strategy looked good on paper</h2>
+
+                <p>
+                    For my production WordPress site, I originally used a layered backup approach combining automatic
+                    AWS Lightsail snapshots with separate WordPress file and MariaDB database backups stored in Amazon
+                    S3.
+                </p>
+
+                <p>
+                    Lightsail automatic snapshots provided fast full-server recovery, but AWS limits automatic Lightsail
+                    snapshot retention to a rolling 7-day window.
+                </p>
+
+                <p>
+                    To retain older backups, I also configured a cron job running on the server which created separate
+                    backups of WordPress files and database exports. These backups were uploaded to Amazon S3 daily
+                    using a 90-day lifecycle policy to automatically delete older backup files.
+                </p>
+
+                <p>
+                    Success or failure notifications were sent automatically each day so I could confirm backup jobs
+                    had completed successfully.
+                </p>
+
+                <p>
+                    On the surface, the system appeared comprehensive:
+                </p>
+
+                <p>
+                    But I eventually realised I had focused too much on backup creation and not enough on recovery.
+                </p>
+
+                <p>
+                    The system prioritised preserving backup data rather than simplifying restoration.
+                </p>
+
+                <ul>
+
+                    <li>Lightsail snapshots were fairly easy to restore, but were limited to 7-day retention</li>
+
+                    <li>Restoring backups older than 7 days required manually rebuilding WordPress files and MariaDB
+                        data from S3 backups</li>
+
+                    <li>Multiple moving parts increased operational complexity</li>
+
+                    <li>Restores depended on several manual steps being performed correctly</li>
+
+                    <li>The process was too complicated and time-consuming to deal with in a site-down emergency</li>
+
+                </ul>
+
+                <h2>The restore test failed</h2>
+
+                <p>
+                    The real problem only became visible during a restore test.
+                </p>
+
+                <p>
+                    Although the backup files themselves existed, the full restore process proved unreliable and far
+                    more fragile than expected. Rebuilding the environment cleanly was not straightforward, especially
+                    on the Bitnami WordPress stack running on AWS Lightsail. I had multiple problems trying to restore
+                    files to MariaDB, especially permissions errors.
+                </p>
+
+                <p>
+                    At that point I recalled what I had read many times:
+                </p>
+
+                <ul>
+                    <li>Backups are meaningless until restores are tested successfully</li>
+                </ul>
+
+                <!-- OPTIONAL INLINE IMAGE -->
+
+                <div class="field-note-inline-image">
+
+                    <a href="../assets/images/field-notes/rethinking-backups-after-a-failed-restore/csgl-lightsail-production-architecture.png"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/field-notes/rethinking-backups-after-a-failed-restore/csgl-lightsail-production-architecture.png"
+                            alt="Bitnami WordPress on AWS Lightsail">
+
+                    </a>
+
+                    <p class="field-note-image-caption">
+                        Revised snapshot-first recovery architecture with automated retention, monitoring and
+                        simplified restoration workflows.
+                    </p>
+
+                </div>
+
+                <h2>Redesigning the recovery strategy</h2>
+
+                <p>
+                    After the failed restore test, I completely changed direction.
+                </p>
+
+                <p>
+                    Instead of relying on layered application-level backups, I moved towards a snapshot-first
+                    strategy
+                    using AWS Lightsail snapshots combined with automated retention policies.
+                </p>
+
+                <p>
+                    The new approach prioritised operational simplicity:
+                </p>
+
+                <ul>
+
+                    <li>Entire server state captured in a single snapshot</li>
+
+                    <li>Faster and more predictable recovery process</li>
+
+                    <li>Fewer dependencies during restoration</li>
+
+                    <li>Simpler testing and validation</li>
+
+                    <li>Reduced operational overhead</li>
+
+                </ul>
+
+                <p>
+                    The revised approach kept Lightsail automatic snapshots for short-term daily recovery, while adding
+                    a separate automated weekly snapshot system for long-term retention.
+                </p>
+
+                <p>
+                    AWS EventBridge triggers a Lambda function each week to create manual Lightsail snapshots
+                    automatically. These snapshots are retained for up to 12 months, bypassing the native 7-day
+                    retention limitation of automatic Lightsail snapshots.
+                </p>
+
+                <p>
+                    CloudWatch monitoring and SNS email alerts were also added so failed snapshot operations could be
+                    detected automatically instead of relying on manual verification.
+                </p>
+
+                <h2>What changed most</h2>
+
+                <p>
+                    The biggest shift was psychological as much as technical.
+                </p>
+
+                <p>
+                    I stopped thinking about backups as files being generated successfully, and started thinking
+                    about
+                    them as recovery systems that needed to work reliably under stress.
+                </p>
+
+                <p>
+                    That changed how I evaluate operational risk across the entire platform.
+                </p>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    The failed restore test ended up being one of the most valuable operational lessons I’ve had so
+                    far.
+                    It exposed weaknesses that would have remained invisible until a real production incident
+                    occurred.
+                </p>
+
+                <p>
+                    Since then, I’ve become much more focused on reducing recovery complexity, simplifying
+                    operational
+                    procedures and designing systems that are easier to restore quickly and reliably.
+                </p>
+
+                <!-- RELATED PROJECT -->
+
+                <h2>Related project</h2>
+
+                <p class="field-note-callout">
+
+                    This work was implemented as part of the
+
+                    <a href="../projects/csgl-lightsail-wordpress.html">
+                        WordPress on AWS Lightsail
+                    </a>
+
+                    project.
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+
+                    <a href="mailto:mailcliffsmith@gmail.com">
+                        Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">
+                        GitHub
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+
+    </footer>
+
+    <!-- LIGHTBOX -->
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+        const lightbox = document.getElementById('lightbox');
+
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+
+                lightbox.style.display = 'flex';
+
+                lightboxImg.src = trigger.href;
+
+            });
+
+        });
+
+        lightbox.addEventListener('click', () => {
+
+            lightbox.style.display = 'none';
+
+            lightboxImg.src = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>
+```

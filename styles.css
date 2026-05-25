@@ -559,6 +559,17 @@ footer {
   margin-bottom: 22px;
 }
 
+.field-note-content-section .field-note-image-caption,
+.field-note-featured-image .field-note-image-caption {
+  font-size: 0.9rem;
+  color: #cfcfcf;
+
+  margin-top: 10px;
+  margin-bottom: 24px;
+
+  text-align: center;
+}
+
 .field-note-content-section ul {
   margin-bottom: 28px;
   padding-left: 22px;
@@ -566,16 +577,6 @@ footer {
 
 .field-note-content-section li {
   margin-bottom: 10px;
-}
-
-.field-note-image-caption {
-  font-size: 0.9rem;
-  color: #777;
-
-  margin-top: 10px;
-  margin-bottom: 24px;
-
-  text-align: center;
 }
 
 .field-note-inline-image {
@@ -589,6 +590,15 @@ footer {
   border-radius: 6px;
 
   display: block;
+}
+
+.homepage-field-notes {
+  max-width: 900px;
+}
+
+.homepage-field-notes .field-note-card:first-child {
+  border-top: none;
+  padding-top: 0;
 }
 
 /* MOBILE */
