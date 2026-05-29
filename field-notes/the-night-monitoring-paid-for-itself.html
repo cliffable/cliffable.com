@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>The Night Monitoring Paid For Itself | Cliffable</title>
+
+    <meta name="description"
+        content="How CloudWatch alarms, Route 53 health checks and SNS notifications helped identify the root cause of a real production outage on AWS Lightsail.">
+
+    <meta name="robots" content="index, follow">
+
+    <link rel="canonical" href="https://cliffable.com/field-notes/the-night-monitoring-paid-for-itself.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/field-notes/">Field Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero field-note-article-hero">
+            <div class="container field-note-container">
+
+                <p class="field-note-article-meta">
+                    Operations • Monitoring • AWS
+                </p>
+
+                <p class="field-note-date">
+                    Published 29 May 2026
+                </p>
+
+                <h1>The Night Monitoring Paid For Itself</h1>
+
+                <p class="field-note-intro">
+                    Only a few days after implementing monitoring and alerting for a production WordPress site, the
+                    system detected a genuine outage. What started as a website-down alert eventually led to the
+                    discovery of an out-of-memory event, forgotten migration settings and a lingering plugin reference
+                    left behind after migration.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- FEATURED IMAGE -->
+
+        <section class="field-note-featured-image">
+            <div class="container field-note-container">
+
+                <a href="../assets/images/field-notes/the-night-monitoring-paid-for-itself/csgl-cpu-utilization-alarm.png"
+                    class="lightbox-trigger">
+
+                    <img src="../assets/images/field-notes/the-night-monitoring-paid-for-itself/csgl-cpu-utilization-alarm.png"
+                        alt="AWS Lightsail CPU utilization alarm triggered during a production outage investigation">
+
+                </a>
+
+                <p class="field-note-image-caption">
+                    CPU utilisation alarm received shortly before the outage, providing the first indication that the
+                    instance was under stress.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- ARTICLE CONTENT -->
+
+        <section class="field-note-content-section">
+            <div class="container field-note-container">
+
+                <h2>The first real test</h2>
+
+                <p>
+                    Shortly after implementing Route 53 health checks, CloudWatch alarms and SNS email notifications, a
+                    health check alarm triggered unexpectedly.
+                </p>
+
+                <p>
+                    At the time, the site appeared healthy. Apache was running, MariaDB was running, system load was low
+                    and memory usage looked normal. The evidence suggested a transient health check failure and no
+                    immediate action was required.
+                </p>
+
+                <p>
+                    A few days later, the monitoring system received its first real test.
+                </p>
+
+                <p>
+                    Multiple alarms triggered:
+                </p>
+
+                <ul>
+                    <li>Route 53 Health Check Status = 0</li>
+                    <li>CloudWatch website-down alarm</li>
+                    <li>CPU utilisation above threshold</li>
+                    <li>Status check failure alarm</li>
+                </ul>
+
+                <p>
+                    Unlike the earlier false alarm, this time multiple independent signals were reporting the same
+                    problem.
+                </p>
+
+                <p>
+                    This time the website was genuinely unavailable.
+                </p>
+
+                <h2>When the site disappeared</h2>
+
+                <p>
+                    The outage occurred overnight. The website was unreachable externally and even browser-based SSH
+                    access failed with an upstream error.
+                </p>
+
+                <p>
+                    By the time investigation began, the instance had been rebooted and appeared healthy again. Apache
+                    was running, MariaDB was running, CPU usage was low and available memory looked normal.
+                </p>
+
+                <p>
+                    At first glance there was no obvious explanation for the outage.
+                </p>
+
+                <p>
+                    That shifted the investigation away from the current system state and towards historical logs.
+                </p>
+
+                <!-- OPTIONAL INLINE IMAGE -->
+
+                <div class="field-note-inline-image">
+
+                    <a href="../assets/images/field-notes/the-night-monitoring-paid-for-itself/csgl-lightsail-production-architecture.png"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/field-notes/the-night-monitoring-paid-for-itself/csgl-lightsail-production-architecture.png"
+                            alt="AWS Lightsail WordPress production architecture with monitoring and alerting">
+
+                    </a>
+
+                    <p class="field-note-image-caption">
+                        Production WordPress architecture with monitoring, alerting and recovery systems deployed on
+                        AWS.
+                    </p>
+
+                </div>
+
+                <h2>Finding the root cause</h2>
+
+                <p>
+                    System logs eventually revealed the sequence of events.
+                </p>
+
+                <p>
+                    Apache had triggered the Linux out-of-memory killer. Shortly afterwards, MariaDB was terminated by
+                    the kernel due to memory exhaustion.
+                </p>
+
+                <p>
+                    Without a database, WordPress could no longer serve pages and the website became unavailable. The
+                    monitoring system detected the failure and generated the alerts.
+                </p>
+
+                <h2>A migration setting left behind</h2>
+
+                <p>
+                    Further investigation uncovered an important detail.
+                </p>
+
+                <p>
+                    During the migration from the Bitnami WordPress blueprint to the official AWS Lightsail WordPress
+                    blueprint, PHP limits had been temporarily increased to support a large All-in-One WP Migration
+                    restore.
+                </p>
+
+                <p>
+                    Those settings were never returned to production values afterwards.
+                </p>
+
+                <p>
+                    Most notably, the PHP memory limit had been left at 2048 MB on a Lightsail instance with only 1 GB
+                    of RAM.
+                </p>
+
+                <p>
+                    Production values were restored and Apache was restarted.
+                </p>
+
+                <ul>
+                    <li>memory_limit = 256M</li>
+                    <li>post_max_size = 128M</li>
+                    <li>upload_max_filesize = 128M</li>
+                    <li>max_execution_time = 300</li>
+                </ul>
+
+                <h2>One more surprise</h2>
+
+                <p>
+                    While investigating the outage, I also reviewed the active WordPress plugins.
+                </p>
+
+                <p>
+                    The plugin list appeared normal until I discovered an orphaned ManageWP worker reference still
+                    present in the WordPress active_plugins configuration.
+                </p>
+
+                <p>
+                    The plugin itself no longer existed, but WordPress still retained the reference from a previous
+                    hosting environment.
+                </p>
+
+                <p>
+                    The stale entry was removed as part of the cleanup process.
+                </p>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    The most valuable lesson from this incident was that monitoring does more than report outages.
+                </p>
+
+                <p>
+                    Monitoring provided the visibility needed to identify what happened, narrow the scope of the
+                    investigation and ultimately find the root cause.
+                </p>
+
+                <p>
+                    Without the health checks, alarms and notifications, the outage might have gone unnoticed for much
+                    longer and the investigation would have started with far less information.
+                </p>
+
+                <p>
+                    Only a few days after deployment, the monitoring system had already proven its value by helping
+                    identify and resolve a real production incident.
+                </p>
+
+                <!-- RELATED PROJECT -->
+
+                <h2>Related project</h2>
+
+                <p class="field-note-callout">
+                    This work was implemented as part of the
+                    <a href="../projects/csgl-lightsail-wordpress.html">
+                        WordPress on AWS Lightsail
+                    </a>
+                    project.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+
+                    <a href="mailto:mailcliffsmith@gmail.com">
+                        Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">
+                        GitHub
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+        const lightbox = document.getElementById('lightbox');
+
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+
+                lightbox.style.display = 'flex';
+
+                lightboxImg.src = trigger.href;
+
+            });
+
+        });
+
+        lightbox.addEventListener('click', () => {
+
+            lightbox.style.display = 'none';
+
+            lightboxImg.src = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>
