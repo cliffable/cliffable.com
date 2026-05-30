@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>When a 1GB Lightsail Instance Wasn't Enough | Cliffable</title>
+
+    <meta name="description"
+        content="How a production WordPress outage on AWS Lightsail revealed the limits of a 1GB instance and changed how I thought about capacity, memory pressure and operational headroom.">
+
+    <meta name="robots" content="index, follow">
+
+    <link rel="canonical" href="https://cliffable.com/field-notes/when-a-1gb-lightsail-instance-wasnt-enough.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/field-notes/">Field Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero field-note-article-hero">
+            <div class="container field-note-container">
+
+                <p class="field-note-article-meta">
+                    Operations • Capacity • AWS
+                </p>
+
+                <p class="field-note-date">
+                    Published 30 May 2026
+                </p>
+
+                <h1>When a 1GB Instance Wasn't Enough</h1>
+
+                <p class="field-note-intro">
+                    After investigating a real production outage on AWS Lightsail, I realised the problem was not just a
+                    single bad setting or a temporary spike. The site was running too close to the limits of a 1GB
+                    instance, with very little operational headroom.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- FEATURED IMAGE -->
+
+        <section class="field-note-featured-image">
+            <div class="container field-note-container">
+
+                <a href="../assets/images/field-notes/when-a-1gb-lightsail-instance-wasnt-enough/csgl-lightsail-1gb-2gb-instances.png"
+                    class="lightbox-trigger">
+
+                    <img src="../assets/images/field-notes/when-a-1gb-lightsail-instance-wasnt-enough/csgl-lightsail-1gb-2gb-instances.png"
+                        alt="AWS Lightsail console showing the original 1GB instance and upgraded 2GB instance">
+
+                </a>
+
+                <p class="field-note-image-caption">
+                    Comparing the original 1 GB Lightsail instance with the upgraded 2 GB production instance after
+                    investigating the outage.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- ARTICLE CONTENT -->
+
+        <section class="field-note-content-section">
+            <div class="container field-note-container">
+
+                <h2>The outage changed the question</h2>
+
+                <p>
+                    The original investigation focused on why the production WordPress site had gone down. Monitoring
+                    had detected the outage, logs showed an out-of-memory event, and MariaDB had been killed by the
+                    Linux OOM killer.
+                </p>
+
+                <p>
+                    The immediate cause was clear enough: the server had run out of memory.
+                </p>
+
+                <p>
+                    But the more useful question was not just why the outage happened. It was whether the instance had
+                    enough capacity to run the site comfortably in normal production use.
+                </p>
+
+                <h2>Fixing the obvious problems</h2>
+
+                <p>
+                    The first step was to correct the issues discovered during the outage investigation.
+                </p>
+
+                <ul>
+                    <li>PHP memory limits were restored to sensible production values</li>
+                    <li>Temporary migration settings were removed</li>
+                    <li>A stale ManageWP plugin reference was cleaned up</li>
+                    <li>Monitoring and alerting were already in place through Route 53, CloudWatch and SNS</li>
+                </ul>
+
+                <p>
+                    These fixes reduced the risk of the same outage happening again for the same reasons.
+                </p>
+
+                <p>
+                    But they did not change the underlying capacity of the server.
+                </p>
+
+                <h2>The old 1GB instance had been stable</h2>
+
+                <p>
+                    One detail made the investigation more interesting: the previous Bitnami-based Lightsail instance
+                    had run reliably
+                    on the same 1GB plan.
+                </p>
+
+                <p>
+                    That suggested the issue was not simply that the website had always required more capacity.
+                    Something had changed
+                    after the migration to the official AWS Lightsail WordPress blueprint.
+                </p>
+
+                <p>
+                    It is possible that the official blueprint has a different baseline memory profile, or that the
+                    migrated production
+                    configuration placed more pressure on the instance than the old environment did.
+                </p>
+
+                <p>
+                    Either way, the practical conclusion was the same: the new production environment no longer had
+                    enough operational
+                    headroom on the 1GB plan.
+                </p>
+
+                <!-- OPTIONAL INLINE IMAGE -->
+
+                <div class="field-note-inline-image">
+
+                    <a href="../assets/images/field-notes/when-a-1gb-lightsail-instance-wasnt-enough/cpu-spike-before-instance-upgrade.png"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/field-notes/when-a-1gb-lightsail-instance-wasnt-enough/cpu-spike-before-instance-upgrade.png"
+                            alt="AWS Lightsail CPU overview showing a spike before the instance upgrade">
+
+                    </a>
+
+                    <p class="field-note-image-caption">
+                        Monitoring data showed the 1 GB instance operating well above its sustainable CPU capacity
+                        before the outage investigation prompted an upgrade.
+                    </p>
+
+                </div>
+
+                <h2>Swap helped, but it was not capacity</h2>
+
+                <p>
+                    A persistent 1GB swap file had already been added to help the instance survive temporary memory
+                    pressure.
+                </p>
+
+                <p>
+                    That was useful, but swap is not the same thing as having enough RAM. It can provide a safety
+                    buffer, but it does not remove the underlying constraint of running WordPress, Apache, MariaDB and
+                    background tasks on a very small instance.
+                </p>
+
+                <p>
+                    The outage made that distinction much clearer.
+                </p>
+
+                <h2>The real lesson was headroom</h2>
+
+                <p>
+                    The site did not need a complex scaling architecture. It did not need containers, load balancers or
+                    a major redesign.
+                </p>
+
+                <p>
+                    It needed enough headroom for normal operational variation: WordPress activity, Apache traffic,
+                    database work, plugin behaviour and background maintenance.
+                </p>
+
+                <p>
+                    A 1GB instance can be enough for some small workloads, but this incident showed that it was too
+                    close to the edge for this production environment.
+                </p>
+
+                <h2>What changed</h2>
+
+                <p>
+                    Previously, I had been focused on keeping costs as low as possible while still running the site
+                    successfully.
+                </p>
+
+                <p>
+                    After this incident, the priority shifted towards operational stability. A slightly larger instance
+                    costs more, but it also provides more breathing room and reduces the chance that routine workload
+                    spikes become outages.
+                </p>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    This incident showed me that production reliability is not only about fixing individual problems. It
+                    is also about making sure the system has enough capacity to absorb normal variation without failing.
+                </p>
+
+                <p>
+                    Monitoring helped identify the outage, logs revealed the immediate cause, and the follow-up
+                    investigation showed the broader issue: the 1GB instance had very little margin for error.
+                </p>
+
+                <p>
+                    The lesson was simple but important. For a production site, the cheapest instance is not always the
+                    best fit if it leaves the system operating too close to its limits.
+                </p>
+
+                <!-- RELATED PROJECT -->
+
+                <h2>Related project</h2>
+
+                <p class="field-note-callout">
+                    This work was implemented as part of the
+                    <a href="../projects/csgl-lightsail-wordpress.html">
+                        WordPress on AWS Lightsail
+                    </a>
+                    project.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+
+                    <a href="mailto:mailcliffsmith@gmail.com">
+                        Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">
+                        GitHub
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+        const lightbox = document.getElementById('lightbox');
+
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+
+                lightbox.style.display = 'flex';
+
+                lightboxImg.src = trigger.href;
+
+            });
+
+        });
+
+        lightbox.addEventListener('click', () => {
+
+            lightbox.style.display = 'none';
+
+            lightboxImg.src = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -330,7 +330,9 @@
 
           <p>
             These changes improved operational visibility and significantly strengthened the resilience of the
-            production environment.
+            production environment. Shortly after deployment, the monitoring system detected a genuine production outage
+            caused by memory exhaustion on the 1 GB instance, leading to further investigation, capacity analysis and an
+            eventual upgrade to a 2 GB plan.
           </p>
 
         </div>
@@ -338,19 +340,19 @@
         <h2>Cost</h2>
 
         <div class="content-block">
-          <p><strong>Typical steady-state infrastructure cost:</strong> ~$4–6/month</p>
+          <p><strong>Typical steady-state infrastructure cost:</strong> ~$6–8/month</p>
 
           <ul>
-            <li>Lightsail instance → $3.89/month (+ VAT)</li>
-            <li>Route 53 → $0.51/month</li>
+            <li>Lightsail 2 GB instance → ~$7/month (+ VAT)</li>
+            <li>Route 53 → ~$0.51/month</li>
           </ul>
 
           <p>
-            Equivalent AWS cost: ~£4.10/month (including VAT, at current exchange rates).
+            Equivalent AWS cost: approximately £6–7/month including VAT, depending on exchange rates and snapshot usage.
           </p>
 
           <p><strong>Previous hosting cost:</strong> £94.80/month (incl. VAT)</p>
-          <p><strong>Cost reduction:</strong> ~94-96%</p>
+          <p><strong>Cost reduction:</strong> ~92–94%</p>
 
           <p>
             Costs temporarily increased during migration, restore testing and snapshot redesign work due to additional
@@ -374,24 +376,42 @@
           <ul>
             <li>The site is live in production on the official AWS Lightsail WordPress blueprint.</li>
             <li>HTTPS, redirects, contact forms, analytics and Google Workspace mail flow are working correctly.</li>
-            <li>Typical monthly hosting cost was reduced by ~94–96% compared with the previous managed hosting setup.
+            <li>Typical monthly hosting cost was reduced by ~92–94% compared with the previous managed hosting setup.
             </li>
             <li>Recovery and monitoring now include automated snapshots, rollback workflows, Route 53 health checks,
               CloudWatch alarms and SNS alerting.</li>
+            <li>
+              Monitoring later detected a real production outage, leading to the identification of memory pressure
+              issues and an upgrade from a 1 GB to 2 GB Lightsail instance.
+            </li>
             <li>The platform now balances simplicity, cost control, recoverability and operational reliability.</li>
           </ul>
+          <h2>Next Steps</h2>
+
+          <div class="content-block">
+
+            <p>
+              The platform is now stable and operating with automated backups, monitoring and alerting. Future
+              improvements will focus on security, resilience and operational maturity.
+            </p>
+
+            <ul>
+              <li>Migrate domain registration from Xilo to Amazon Route 53 for simplified management and tighter
+                integration with AWS services</li>
+
+              <li>Place the production site behind CloudFront to improve performance, reduce direct exposure of the
+                Lightsail instance and provide a foundation for additional security controls</li>
+
+              <li>Evaluate AWS WAF integration to provide protection against common web attacks and automated scanning
+                activity</li>
+
+              <li>Continue monitoring resource utilisation on the upgraded 2 GB instance to validate long-term capacity
+                requirements</li>
+            </ul>
+
+          </div>
+
         </div>
-
-        <h2>Next Steps</h2>
-
-        <div class="content-block">
-          <p>
-            Future improvements could include infrastructure-as-code deployment, centralized logging, enhanced metrics
-            collection and migration to a more modular multi-service AWS architecture if scaling requirements increase.
-          </p>
-        </div>
-
-      </div>
     </section>
   </main>
 
