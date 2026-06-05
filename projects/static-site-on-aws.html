@@ -10,10 +10,6 @@
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://cliffable.com/projects/static-site-on-aws.html">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,6 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
   <script>
@@ -121,30 +118,8 @@
           </p>
 
           <p>
-            Deployment is automated through GitHub Actions. Changes pushed to the main branch trigger a workflow that
-            syncs the site files to S3 and creates a CloudFront invalidation so updates are published automatically.
-          </p>
-
-          <p>
             This setup keeps the architecture simple while using managed services for storage, delivery and DNS,
             reducing operational overhead compared with managing a server-based solution.
-          </p>
-
-          <p style="margin-top: 32px;"><strong>Automated Deployment Pipeline</strong></p>
-
-          <div class="project-architecture">
-            <a href="../assets/images/automated-deployment-pipeline.png" class="lightbox-trigger"
-              title="View full automated deployment pipeline diagram">
-              <img src="../assets/images/automated-deployment-pipeline.png"
-                alt="CI/CD pipeline using GitHub Actions and OIDC to deploy a static website to AWS S3 and CloudFront"
-                class="architecture-diagram">
-            </a>
-          </div>
-
-          <p>
-            This pipeline removes manual S3 uploads and creates a repeatable deployment workflow. GitHub Actions uses
-            OIDC to assume a least-privilege AWS IAM role, then deploys updated site files and invalidates CloudFront so
-            changes are reflected immediately on the live site.
           </p>
 
         </div>
@@ -245,6 +220,32 @@
           </div>
         </div>
 
+        <h2>Deployment Automation</h2>
+
+        <div class="content-block">
+
+          <div class="project-architecture">
+            <a href="../assets/images/automated-deployment-pipeline.png" class="lightbox-trigger"
+              title="View full automated deployment pipeline diagram">
+              <img src="../assets/images/automated-deployment-pipeline.png"
+                alt="CI/CD pipeline using GitHub Actions and OIDC to deploy a static website to AWS S3 and CloudFront"
+                class="architecture-diagram">
+            </a>
+          </div>
+
+          <p>
+            Deployment is automated through GitHub Actions. Changes pushed to the main branch trigger a workflow that
+            syncs the site files to S3 and creates a CloudFront invalidation so updates are published automatically.
+          </p>
+
+          <p>
+            This pipeline removes manual S3 uploads and creates a repeatable deployment workflow. GitHub Actions uses
+            OIDC to assume a least-privilege AWS IAM role, then deploys updated site files and invalidates CloudFront so
+            changes are reflected immediately on the live site.
+          </p>
+
+        </div>
+
         <h2>Cost</h2>
 
         <div class="content-block">
@@ -263,6 +264,39 @@
           </ul>
         </div>
 
+        <h2>Domain Redirect Architecture</h2>
+
+        <div class="content-block">
+
+          <div class="project-architecture">
+            <a href="../assets/images/domain-redirect-architecture.png" class="lightbox-trigger"
+              title="View full domain redirect architecture diagram">
+              <img src="../assets/images/domain-redirect-architecture.png"
+                alt="AWS domain redirect architecture using Route 53, CloudFront, ACM and S3 redirect buckets"
+                class="architecture-diagram">
+            </a>
+          </div>
+
+          <p>
+            As the site developed, I consolidated the Cliffable domains into the dedicated AWS account and configured
+            secondary
+            domains to redirect permanently to the primary domain.
+          </p>
+
+          <p>
+            The primary site remains <strong>cliffable.com</strong>, while <strong>cliffable.net</strong>,
+            <strong>www.cliffable.net</strong>, <strong>cliffable.co.uk</strong> and
+            <strong>www.cliffable.co.uk</strong> now redirect to it using HTTPS.
+          </p>
+
+          <p>
+            Because S3 website redirects only support HTTP, I used CloudFront and ACM certificates in front of S3
+            redirect
+            buckets to provide secure HTTPS redirects for both apex and www domains.
+          </p>
+
+        </div>
+
         <h2>Outcome</h2>
 
         <div class="content-block">
@@ -273,12 +307,13 @@
           </p>
 
           <ul>
-            <li>The site is simple, fast and low maintenance</li>
-            <li>The project gave me hands-on experience connecting core AWS networking, delivery and DNS services</li>
-            <li>Deployment is now automated from GitHub to AWS using GitHub Actions</li>
-            <li>The pipeline uses OIDC rather than long-lived AWS access keys</li>
-            <li>The site now has a clearer structure for search engines, with indexing and discoverability considered as
-              part of the build</li>
+            <li>Created a simple, fast and low-maintenance hosting platform</li>
+            <li>Gained hands-on experience connecting core AWS networking, delivery and DNS services</li>
+            <li>Implemented automated deployment from GitHub to AWS using GitHub Actions</li>
+            <li>Implemented OIDC-based authentication instead of long-lived AWS access keys</li>
+            <li>Built a site structure designed for search engine indexing and discoverability</li>
+            <li>Implemented secure HTTPS redirects for secondary domains using Route 53, CloudFront, ACM and S3 redirect
+              buckets</li>
           </ul>
         </div>
 
@@ -286,8 +321,15 @@
 
         <div class="content-block">
           <p>
-            Add a staging environment using a separate branch, S3 bucket, CloudFront distribution and staging subdomain
-            to enable safe testing before production deployment.
+            Continue expanding the site with new projects and Field Notes, while refining the content, architecture
+            diagrams
+            and publishing workflow.
+          </p>
+
+          <p>
+            Future improvements may include automating updates to the homepage and Field Notes index page, reducing the
+            manual
+            steps required when publishing new content.
           </p>
         </div>
 

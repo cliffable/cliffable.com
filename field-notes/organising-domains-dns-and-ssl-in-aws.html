@@ -1,0 +1,441 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+    FIELD NOTE TEMPLATE
+    Duplicate this file for new Field Notes articles.
+    -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Organising Domains, DNS and SSL in AWS | Cliffable</title>
+
+    <meta name="description"
+        content="How I consolidated Cliffable domains into a dedicated AWS account and built HTTPS redirects using Route 53, CloudFront, ACM and S3.">
+
+    <meta name="robots" content="index, follow">
+
+    <link rel="canonical" href="https://cliffable.com/field-notes/organising-domains-dns-and-ssl-in-aws.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/field-notes/">Field Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero field-note-article-hero">
+            <div class="container field-note-container">
+
+                <p class="field-note-article-meta">
+                    AWS • DNS • Networking
+                </p>
+
+                <p class="field-note-date">
+                    Published 5 June 2026
+                </p>
+
+                <h1>Organising Domains, DNS and SSL in AWS</h1>
+
+                <p class="field-note-intro">
+                    As Cliffable moved from a training project into a live portfolio site, I consolidated the domains
+                    into a dedicated AWS account and built HTTPS redirects for secondary domains using Route 53,
+                    CloudFront, ACM and S3.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- FEATURED IMAGE -->
+
+        <section class="field-note-featured-image">
+            <div class="container field-note-container">
+
+                <a href="../assets/images/field-notes/organising-domains-dns-and-ssl-in-aws/domain-redirect-architecture.png"
+                    class="lightbox-trigger">
+
+                    <img src="../assets/images/field-notes/organising-domains-dns-and-ssl-in-aws/domain-redirect-architecture.png"
+                        alt="AWS domain redirect architecture diagram using Route 53, CloudFront, ACM and S3 redirect buckets">
+
+                </a>
+
+                <p class="field-note-image-caption">
+                    HTTPS redirect architecture for apex and www domains, using Route 53, CloudFront, ACM and S3
+                    redirect
+                    buckets.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- ARTICLE CONTENT -->
+
+        <section class="field-note-content-section">
+            <div class="container field-note-container">
+
+                <h2>Separating training from production</h2>
+
+                <p>
+                    The Cliffable domains were originally purchased in another AWS account, which had become my general
+                    training account while studying and building AWS labs.
+                </p>
+
+                <p>
+                    As Cliffable developed into a live portfolio site, I wanted a cleaner separation between temporary
+                    training resources and production infrastructure.
+                </p>
+
+                <p>
+                    The goal was to manage the main website, domains, DNS records, SSL certificates and redirect
+                    infrastructure from one AWS account.
+                </p>
+
+                <h2>Transferring the domains</h2>
+
+                <p>
+                    The next step was moving the domains into the Cliffable account. This was fairly straightforward as
+                    the migration was entirely within AWS.
+                </p>
+
+                <p>
+                    After the transfer completed, I recreated the Route 53 hosted zones and updated the registrar name
+                    servers to point to them.
+                </p>
+
+                <p>
+                    With the domains, DNS records and SSL certificates now managed alongside the website, future
+                    administration became much simpler.
+                </p>
+
+                <h2>The redirect requirement</h2>
+
+                <p>
+                    Cliffable uses <strong>cliffable.com</strong> as the primary domain.
+                </p>
+
+                <p>
+                    The secondary domains needed to redirect permanently to the main site:
+                </p>
+
+                <ul>
+                    <li>cliffable.net → cliffable.com</li>
+                    <li>www.cliffable.net → cliffable.com</li>
+                    <li>cliffable.co.uk → cliffable.com</li>
+                    <li>www.cliffable.co.uk → cliffable.com</li>
+                </ul>
+
+                <p>
+                    The redirects also needed to work over HTTPS for both apex and www versions of each domain.
+                </p>
+
+                <h2>Why S3 alone was not enough</h2>
+
+                <p>
+                    My initial solution used dedicated S3 website redirect buckets for the secondary domains.
+                </p>
+
+                <p>
+                    S3 static website hosting can generate redirect responses, but S3 website endpoints only support
+                    HTTP. That meant S3 alone could not provide HTTPS redirects for custom domains.
+                </p>
+
+                <p>
+                    To make the redirects work securely over HTTPS, I needed CloudFront in front of the S3 redirect
+                    buckets, with ACM certificates attached to the CloudFront distributions.
+                </p>
+
+                <h2>The final architecture</h2>
+
+                <p>
+                    The final redirect path became:
+                </p>
+
+                <ul>
+                    <li>Route 53 receives the request for the secondary domain</li>
+                    <li>Route 53 alias records point the domain to CloudFront</li>
+                    <li>CloudFront provides HTTPS support using an ACM certificate</li>
+                    <li>CloudFront forwards the request to the S3 website redirect bucket</li>
+                    <li>S3 returns a 301 permanent redirect to https://cliffable.com</li>
+                </ul>
+
+                <p>
+                    To support this design, I first created ACM certificates in <strong>us-east-1</strong>, because
+                    CloudFront requires certificates to be issued in that region.
+                </p>
+
+                <p>
+                    Each certificate covered both the apex and www versions of the redirect domain. DNS validation was
+                    completed through Route 53 and the certificates were issued automatically once the validation
+                    records propagated.
+                </p>
+
+                <p>
+                    I then created separate CloudFront distributions for <strong>cliffable.net</strong> and
+                    <strong>cliffable.co.uk</strong>, using dedicated S3 website redirect buckets as origins.
+                </p>
+
+                <p>
+                    Each distribution was configured with:
+                </p>
+
+                <ul>
+                    <li>A custom ACM certificate</li>
+                    <li>Alternate domain names for both the apex and www versions of the domain</li>
+                    <li>An S3 website redirect bucket as the origin</li>
+                </ul>
+
+                <p>
+                    Finally, I created Route 53 alias records for both A and AAAA responses, pointing the apex and www
+                    domains to the appropriate CloudFront distribution.
+                </p>
+
+                <p>
+                    This completed the HTTPS redirect path from the domain, through CloudFront, to the S3 redirect
+                    bucket and ultimately to <strong>https://cliffable.com</strong>.
+                </p>
+
+                <!-- OPTIONAL INLINE IMAGE -->
+
+                <div class="field-note-inline-image">
+
+                    <a href="../assets/images/field-notes/organising-domains-dns-and-ssl-in-aws/cloudfront-redirect-distribution.png"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/field-notes/organising-domains-dns-and-ssl-in-aws/cloudfront-redirect-distribution.png"
+                            alt="CloudFront redirect distribution configured with cliffable.co.uk and www.cliffable.co.uk alternate domain names and SSL certificate">
+
+                    </a>
+
+                    <p class="field-note-image-caption">
+                        CloudFront and ACM provided HTTPS support for both apex and www domains, enabling secure
+                        redirects that would not have been possible using an S3 website redirect alone.
+                    </p>
+
+                </div>
+
+                <h2>Troubleshooting the redirects</h2>
+
+                <p>
+                    A few issues appeared during implementation.
+                </p>
+
+                <p>
+                    The first was a temporary 504 Gateway Timeout from CloudFront while the distributions were still
+                    deploying. This resolved once deployment completed.
+                </p>
+
+                <p>
+                    The second issue was that the www versions of the domains initially returned NXDOMAIN. The cause was
+                    that the CloudFront distributions had originally been configured only for the apex domains.
+                </p>
+
+                <p>
+                    Adding the www names as alternate domain names in CloudFront, then creating the matching Route 53
+                    alias records, resolved the issue.
+                </p>
+
+                <p>
+                    There was also a short period of confusion caused by local DNS caching. Public resolvers were
+                    already returning valid CloudFront addresses, while the local resolver still returned NXDOMAIN.
+                    Testing with external resolvers confirmed that the AWS configuration was correct.
+                </p>
+
+                <h2>Validation</h2>
+
+                <p>
+                    Once the distributions deployed and DNS propagated, I verified that all secondary domains redirected
+                    correctly to the primary site.
+                </p>
+
+                <ul>
+                    <li>cliffable.net</li>
+                    <li>www.cliffable.net</li>
+                    <li>cliffable.co.uk</li>
+                    <li>www.cliffable.co.uk</li>
+                </ul>
+
+                <p>
+                    Each domain redirected to <strong>https://cliffable.com</strong> using HTTPS and a permanent 301
+                    redirect.
+                </p>
+
+                <h2>The benefit of keeping everything together</h2>
+
+                <p>
+                    Having worked with domains registered both inside and outside AWS, I came away with a much stronger
+                    appreciation for managing domains within the same AWS account as the infrastructure.
+                </p>
+
+                <p>
+                    Route 53, ACM and CloudFront integrate closely with one another. DNS validation records can be
+                    created automatically, hosted zones are immediately available during certificate creation, and there
+                    is far less context switching between providers and management consoles.
+                </p>
+
+                <p>
+                    While there may be valid business reasons to keep domain registration elsewhere, managing the
+                    domains within the same AWS account significantly reduced complexity and made the overall workflow
+                    easier to understand and maintain.
+                </p>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    What looked like a simple redirect task became a useful lesson in how DNS, SSL certificates,
+                    CloudFront and S3 fit together on AWS.
+                </p>
+
+                <p>
+                    S3 redirect buckets handled the redirect response, but CloudFront and ACM were required to make the
+                    redirects work properly over HTTPS for custom domains.
+                </p>
+
+                <p>
+                    Consolidating the domains into the Cliffable AWS account also made the platform cleaner. Training
+                    resources now live separately from production infrastructure, while the close integration between
+                    Route 53, ACM and CloudFront simplified ongoing management.
+                </p>
+
+                <!-- RELATED PROJECT -->
+
+                <h2>Related project</h2>
+
+                <p class="field-note-callout">
+                    This work was implemented as part of the
+                    <a href="../projects/static-site-on-aws.html">
+                        Static Website on AWS
+                    </a>
+                    project.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+
+                    <a href="mailto:mailcliffsmith@gmail.com">
+                        Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">
+                        GitHub
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+        const lightbox = document.getElementById('lightbox');
+
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+
+                lightbox.style.display = 'flex';
+
+                lightboxImg.src = trigger.href;
+
+            });
+
+        });
+
+        lightbox.addEventListener('click', () => {
+
+            lightbox.style.display = 'none';
+
+            lightboxImg.src = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>
+```
