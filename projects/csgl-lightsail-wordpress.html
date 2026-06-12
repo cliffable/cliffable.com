@@ -335,6 +335,17 @@
             eventual upgrade to a 2 GB plan.
           </p>
 
+          <p>
+            The monitoring alerts and security-related events that followed prompted a wider review of the platform,
+            resulting in additional WordPress hardening, DNS consolidation and a review of domain management processes.
+          </p>
+
+          <p>
+            <a href="../field-notes/a-wordpress-infrastructure-review.html">
+              Read: A WordPress Infrastructure Review →
+            </a>
+          </p>
+
         </div>
 
         <h2>Cost</h2>
@@ -384,6 +395,11 @@
               Monitoring later detected a real production outage, leading to the identification of memory pressure
               issues and an upgrade from a 1 GB to 2 GB Lightsail instance.
             </li>
+            <li>
+              A subsequent infrastructure review led to WordPress hardening, DNS consolidation into Route 53 and the
+              identification of domain transfer issues that are being resolved as part of an ongoing migration away from
+              the registrar.
+            </li>
             <li>The platform now balances simplicity, cost control, recoverability and operational reliability.</li>
           </ul>
           <h2>Next Steps</h2>
@@ -396,15 +412,12 @@
             </p>
 
             <ul>
-              <li>Migrate domain registration from Xilo to Amazon Route 53 for simplified management and tighter
-                integration with AWS services</li>
-
+              <li>Complete the transfer of domain registrations from Xilo to Amazon Route 53 once the current registry
+                transfer lock expires</li>
               <li>Place the production site behind CloudFront to improve performance, reduce direct exposure of the
                 Lightsail instance and provide a foundation for additional security controls</li>
-
               <li>Evaluate AWS WAF integration to provide protection against common web attacks and automated scanning
                 activity</li>
-
               <li>Continue monitoring resource utilisation on the upgraded 2 GB instance to validate long-term capacity
                 requirements</li>
             </ul>

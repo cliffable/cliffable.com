@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+    FIELD NOTE TEMPLATE
+    Duplicate this file for new Field Notes articles.
+    -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>A WordPress Infrastructure Review | Cliffable</title>
+
+    <meta name="description"
+        content="A security alert prompted a wider review of a WordPress site running on AWS Lightsail, leading to server, security, DNS and domain management improvements.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="canonical" href="https://cliffable.com/field-notes/a-wordpress-infrastructure-review.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/field-notes/">Field Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero field-note-article-hero">
+            <div class="container field-note-container">
+
+                <p class="field-note-article-meta">
+                    WordPress • AWS Lightsail • Infrastructure
+                </p>
+
+                <p class="field-note-date">
+                    Published 12 June 2026
+                </p>
+
+                <h1>A WordPress Infrastructure Review</h1>
+
+                <p class="field-note-intro">
+                    A security alert prompted a wider review of my WordPress infrastructure, leading to changes across
+                    server sizing, WordPress hardening, DNS management and domain operations.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- FEATURED IMAGE -->
+
+        <section class="field-note-featured-image">
+            <div class="container field-note-container">
+
+                <a href="../assets/images/field-notes/a-wordpress-infrastructure-review/wordpress-infrastructure-review-before-and-after.png"
+                    class="lightbox-trigger">
+
+                    <img src="../assets/images/field-notes/a-wordpress-infrastructure-review/wordpress-infrastructure-review-before-and-after.png"
+                        alt="Before and after comparison of a WordPress infrastructure review">
+
+                </a>
+
+                <p class="field-note-image-caption">
+                    Infrastructure changes made following a review prompted by monitoring alerts, security concerns and
+                    domain management issues.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- ARTICLE CONTENT -->
+
+        <section class="field-note-content-section">
+            <div class="container field-note-container">
+
+                <h2>The trigger for the review</h2>
+
+                <p>
+                    After upgrading my WordPress site from a 1 GB Lightsail instance to a 2 GB instance, the platform
+                    appeared to be in a much better state. The earlier memory pressure had been reduced, monitoring was
+                    in place, and the site was running normally.
+                </p>
+
+                <p>
+                    A few days later, I received an unexpected WordPress password reset email. Around the same period,
+                    CloudWatch alarms and health checks also raised concerns about the behaviour of the site.
+                </p>
+
+                <p>
+                    The site did not appear to be compromised, but the combination of monitoring alerts and an
+                    unexpected
+                    security-related email was enough to prompt a wider review.
+                </p>
+
+                <h2>Reviewing the WordPress server</h2>
+
+                <p>
+                    I started with the WordPress installation itself. The aim was to reduce unnecessary exposure, remove
+                    anything I did not need, and make the administrative surface of the site smaller.
+                </p>
+
+                <ul>
+                    <li>Created a new administrator account.</li>
+                    <li>Removed the old administrator account.</li>
+                    <li>Reviewed and removed unnecessary plugins.</li>
+                    <li>Disabled public user enumeration via the WordPress REST API.</li>
+                    <li>Reviewed logs and monitoring data after the alerts.</li>
+                    <li>Adjusted Apache worker settings to reduce memory pressure.</li>
+                </ul>
+
+                <p>
+                    None of these changes was especially complex on its own. The important lesson was that operating a
+                    live WordPress site is not just about keeping the instance running. The application, plugins, users,
+                    logs and server configuration all form part of the operational picture.
+                </p>
+
+                <h2>Looking beyond the server</h2>
+
+                <p>
+                    Once the WordPress installation had been reviewed, I looked at the wider infrastructure around the
+                    site. The website
+                    itself was hosted in AWS Lightsail, but the domains were still registered with Xilo, DNS was managed
+                    through Xilo,
+                    and the .com redirect relied on Cloudflare.
+                </p>
+
+                <p>
+                    My goal was to simplify the overall architecture by moving more of the supporting infrastructure
+                    into AWS. The first
+                    step was migrating DNS for cliffsmithguitarlessons.co.uk into Route 53, giving me direct control of
+                    DNS alongside the
+                    rest of the AWS environment.
+                </p>
+
+                <p>
+                    I then began planning a wider migration that would eventually move the .com redirect into AWS using
+                    CloudFront and an
+                    S3 redirect bucket, while also transferring the domain registrations themselves away from Xilo.
+                </p>
+
+                <h2>Registrar and transfer issues</h2>
+
+                <p>
+                    The domain work quickly became more complicated than expected. During the migration process, several
+                    domain
+                    management operations began failing with unclear error messages, including nameserver changes,
+                    registrar lock
+                    changes and contact validation updates.
+                </p>
+
+                <!-- OPTIONAL INLINE IMAGE -->
+
+                <div class="field-note-inline-image">
+
+                    <a href="../assets/images/field-notes/a-wordpress-infrastructure-review/xilo-domain-management-errors.png"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/field-notes/a-wordpress-infrastructure-review/xilo-domain-management-errors.png"
+                            alt="Examples of Xilo portal and domain management errors">
+
+                    </a>
+
+                    <p class="field-note-image-caption">
+                        Several domain management operations failed during the migration process. The root cause was
+                        eventually traced to a combination of registrar-side issues, an outdated registrant email
+                        address
+                        and registry restrictions triggered during the transfer process.
+                    </p>
+
+                </div>
+
+                <p>
+                    What initially looked like a DNS or registrar problem turned out to be an administrative one. The
+                    registrant email
+                    address on the domains was outdated, meaning transfer approval messages could not be received.
+                </p>
+
+                <p>
+                    Updating the registrant details resolved that issue, but it triggered a registry-imposed transfer
+                    lock that delayed
+                    the remaining migration work. As a result, the .co.uk domain now uses Route 53 for DNS, but the
+                    domain registrations
+                    remain with Xilo and the .com redirect continues to use Cloudflare for the time being.
+                </p>
+
+                <p>
+                    This was a useful reminder that infrastructure risk is not always caused by servers, code or cloud
+                    configuration.
+                    Sometimes the weak point is administrative information that has quietly become out of date.
+                </p>
+
+                <h2>Current state</h2>
+
+                <p>
+                    The main WordPress site is now running on a larger Lightsail instance, with monitoring in place and
+                    a cleaner WordPress configuration. The .co.uk domain uses Route 53 for DNS, while the .com domain
+                    remains with Cloudflare for now because the registrar-side transfer process is delayed.
+                </p>
+
+                <p>
+                    The next planned improvement is to place the .co.uk WordPress site behind CloudFront and AWS WAF.
+                    That should reduce direct exposure of the Lightsail instance and provide a better place to apply
+                    managed security rules and rate limiting.
+                </p>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    What started as a response to a single security alert became a broader infrastructure review. The
+                    process improved the WordPress installation, clarified the domain architecture, exposed weaknesses
+                    in
+                    the registrar setup, and created a clear next step for improving resilience with CloudFront and AWS
+                    WAF.
+                </p>
+
+                <!-- RELATED PROJECT -->
+
+                <h2>Related project</h2>
+
+                <p class="field-note-callout">
+                    This work was implemented as part of the
+                    <a href="../projects/csgl-lightsail-wordpress.html">
+                        WordPress on AWS Lightsail
+                    </a>
+                    project.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+
+                    <a href="mailto:mailcliffsmith@gmail.com">
+                        Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">
+                        GitHub
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+        const lightbox = document.getElementById('lightbox');
+
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+
+                lightbox.style.display = 'flex';
+
+                lightboxImg.src = trigger.href;
+
+            });
+
+        });
+
+        lightbox.addEventListener('click', () => {
+
+            lightbox.style.display = 'none';
+
+            lightboxImg.src = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>
