@@ -462,11 +462,11 @@ footer {
    Engineering Notes
 ======================== */
 
-.field-notes-hero {
+.engineering-notes-hero {
   padding-bottom: 0;
 }
 
-.field-notes-list {
+.engineering-notes-list {
   padding-bottom: 80px;
 }
 
@@ -601,11 +601,11 @@ line-height: 1.4;
   display: block;
 }
 
-.homepage-field-notes {
+.homepage-engineering-notes {
   max-width: 900px;
 }
 
-.homepage-field-notes .field-note-card:first-child {
+.homepage-engineering-notes .engineering-note-card:first-child {
   border-top: none;
   padding-top: 0;
 }
