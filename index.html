@@ -47,7 +47,7 @@
 
       <nav class="main-nav">
         <a href="/projects/">Projects</a>
-        <a href="/field-notes/">Field Notes</a>
+        <a href="/field-notes/">Engineering Notes</a>
         <a href="/about.html">About</a>
         <a href="/contact.html">Contact</a>
       </nav>
@@ -118,45 +118,15 @@
             </div>
           </a>
 
-          <!-- Project 3 -->
-          <a href="/projects/designing-the-cliffable-brand.html" class="project-card-link">
-            <div class="project-card">
-              <h4>Designing the Cliffable Brand</h4>
-
-              <img src="/assets/images/cliffable-brand-system.png" alt="Cliffable brand system diagram">
-
-              <p>
-                Building the Cliffable identity from scratch — domain selection, logo design, and a minimal portfolio
-                website.
-              </p>
-            </div>
-          </a>
-
-          <!-- Project 4 -->
-          <a href="/projects/secure-aws-vpc-with-bastion-host.html" class="project-card-link">
-            <div class="project-card">
-              <h4>Secure AWS VPC with Bastion Host</h4>
-
-              <img src="/assets/images/Secure-AWS-VPC-with-bastion-host.png"
-                alt="AWS VPC architecture with bastion host, private subnet, NAT Gateway and route tables">
-
-              <p>
-                Designed a secure AWS VPC architecture using public and private subnets, a bastion host, NAT Gateway and
-                route tables to control administrative and outbound network access.
-              </p>
-            </div>
-          </a>
         </div>
-
-      </div>
     </section>
 
-    <!-- Latest Field Notes -->
+    <!-- Latest Engineering Notes -->
 
     <section id="field-notes">
       <div class="container">
 
-        <h2>Latest Field Notes</h2>
+        <h2>Latest Engineering Notes</h2>
 
         <p class="section-intro">
           Short technical notes from building, operating and improving real cloud systems.
@@ -178,16 +148,16 @@
 
               </a>
 
+              <p class="field-note-date">
+                Published 12 June 2026
+              </p>
+
             </div>
 
             <div class="field-note-content">
 
               <p class="field-note-meta">
                 WordPress • AWS Lightsail • Infrastructure
-              </p>
-
-              <p class="field-note-date">
-                Published 12 June 2026
               </p>
 
               <h2>
@@ -198,8 +168,7 @@
 
               <p class="field-note-summary">
                 How a security alert and monitoring alarms led to a broader review of my WordPress infrastructure,
-                exposing
-                weaknesses in security, domain management and operational processes.
+                exposing weaknesses in security, domain management and operational processes.
               </p>
 
               <a href="/field-notes/a-wordpress-infrastructure-review.html" class="field-note-link">
@@ -211,6 +180,7 @@
           </article>
 
           <!-- Field Note 2 -->
+
           <article class="field-note-card">
 
             <div class="field-note-thumbnail">
@@ -223,16 +193,16 @@
 
               </a>
 
+              <p class="field-note-date">
+                Published 5 June 2026
+              </p>
+
             </div>
 
             <div class="field-note-content">
 
               <p class="field-note-meta">
                 AWS • DNS • Networking
-              </p>
-
-              <p class="field-note-date">
-                Published 5 June 2026
               </p>
 
               <h2>
@@ -243,8 +213,7 @@
 
               <p class="field-note-summary">
                 How I consolidated Cliffable domains into a dedicated AWS account and built HTTPS redirects for
-                secondary domains
-                using Route 53, CloudFront, ACM and S3.
+                secondary domains using Route 53, CloudFront, ACM and S3.
               </p>
 
               <a href="/field-notes/organising-domains-dns-and-ssl-in-aws.html" class="field-note-link">
@@ -255,10 +224,100 @@
 
           </article>
 
+          <!-- Field Note 3 -->
+
+          <article class="field-note-card">
+
+            <div class="field-note-thumbnail">
+
+              <a href="/field-notes/when-a-1gb-lightsail-instance-wasnt-enough.html">
+
+                <img
+                  src="/assets/images/field-notes/when-a-1gb-lightsail-instance-wasnt-enough/cpu-spike-before-instance-upgrade.png"
+                  alt="AWS Lightsail CPU usage spike before an instance upgrade">
+
+              </a>
+
+              <p class="field-note-date">
+                Published 31 May 2026
+              </p>
+
+            </div>
+
+            <div class="field-note-content">
+
+              <p class="field-note-meta">
+                AWS • Lightsail • Operations
+              </p>
+
+              <h2>
+                <a href="/field-notes/when-a-1gb-lightsail-instance-wasnt-enough.html">
+                  When a 1GB Lightsail Instance Wasn't Enough
+                </a>
+              </h2>
+
+              <p class="field-note-summary">
+                How a production outage and memory exhaustion revealed the limitations of a 1 GB Lightsail instance and
+                led to an infrastructure upgrade.
+              </p>
+
+              <a href="/field-notes/when-a-1gb-lightsail-instance-wasnt-enough.html" class="field-note-link">
+                Read note →
+              </a>
+
+            </div>
+
+          </article>
+
+          <!-- Field Note 4 -->
+
+          <article class="field-note-card">
+
+            <div class="field-note-thumbnail">
+
+              <a href="/field-notes/the-night-monitoring-paid-for-itself.html">
+
+                <img
+                  src="/assets/images/field-notes/the-night-monitoring-paid-for-itself/csgl-cpu-utilization-alarm.png"
+                  alt="AWS Lightsail CPU utilization alarm triggered during a production outage investigation">
+
+              </a>
+
+              <p class="field-note-date">
+                Published 29 May 2026
+              </p>
+
+            </div>
+
+            <div class="field-note-content">
+
+              <p class="field-note-meta">
+                AWS • Monitoring • Operations
+              </p>
+
+              <h2>
+                <a href="/field-notes/the-night-monitoring-paid-for-itself.html">
+                  The Night Monitoring Paid For Itself
+                </a>
+              </h2>
+
+              <p class="field-note-summary">
+                How monitoring and alerting detected a real production outage and helped trace the root cause to memory
+                exhaustion, migration PHP settings and a stale plugin reference.
+              </p>
+
+              <a href="/field-notes/the-night-monitoring-paid-for-itself.html" class="field-note-link">
+                Read note →
+              </a>
+
+            </div>
+
+          </article>
+
         </div>
 
         <div style="margin-top: 32px;">
-          <a class="button" href="/field-notes/">View All Field Notes</a>
+          <a class="button" href="/field-notes/">View All Engineering Notes</a>
         </div>
 
       </div>
