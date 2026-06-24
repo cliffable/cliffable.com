@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+    ENGINEERING NOTE TEMPLATE
+    Duplicate this file for new Engineering Notes articles.
+    -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AWS Cost Protection Strategy | Cliffable</title>
+
+    <meta name="description"
+        content="How I built a layered AWS cost protection strategy using budgets, billing audits, IAM guardrails, region restrictions and high-risk service controls.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="canonical" href="https://cliffable.com/engineering-notes/aws-cost-protection-strategy.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/engineering-notes/">Engineering Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero engineering-note-article-hero">
+            <div class="container engineering-note-container">
+
+                <p class="engineering-note-article-meta">
+                    AWS • FinOps • IAM
+                </p>
+
+                <p class="engineering-note-date">
+                    Published 24 June 2026
+                </p>
+
+                <h1>AWS Cost Protection Strategy</h1>
+
+                <p class="engineering-note-intro">
+                    After finding several small but unexpected AWS charges, I built a layered cost protection strategy
+                    across my accounts using budget alerts, monthly audits, region restrictions and IAM guardrails.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- FEATURED IMAGE -->
+
+        <section class="engineering-note-featured-image">
+            <div class="container engineering-note-container">
+
+                <a href="../assets/images/engineering-notes/aws-cost-protection-strategy/aws-cost-protection-strategy-budget-thresholds.png"
+                    class="lightbox-trigger">
+
+                    <img src="../assets/images/engineering-notes/aws-cost-protection-strategy/aws-cost-protection-strategy-budget-thresholds.png"
+                        alt="AWS budget preview showing multiple cost alert thresholds">
+
+                </a>
+
+                <p class="engineering-note-image-caption">
+                    Multiple budget thresholds were configured to provide escalating alerts as AWS costs increase.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- ARTICLE CONTENT -->
+
+        <section class="engineering-note-content-section">
+            <div class="container engineering-note-container">
+
+                <h2>Why I reviewed my AWS cost controls</h2>
+
+                <p>
+                    I started with a simple billing audit across my AWS accounts. The aim was to check whether anything
+                    had been left running after labs, experiments or infrastructure changes.
+                </p>
+
+                <p>
+                    The audit found several small but unexpected charges, including AWS Config recording and an old RDS
+                    snapshot. None of the charges were serious on their own, but they
+                    highlighted a wider issue: small AWS costs can persist quietly if they are not reviewed regularly.
+                </p>
+
+                <p>
+                    The audit also exposed the limits of budget alerts. They are useful for detecting unexpected spend,
+                    but they only react after costs have started to accumulate.
+                </p>
+
+                <p>
+                    One of the more uncomfortable discoveries was realising that AWS does not provide a simple
+                    hard spending cap for an account. Budgets and alerts can warn about costs, but they do not
+                    stop resources being created. In theory, a sufficiently expensive service, configuration
+                    mistake or compromised account could generate costs running into tens or even hundreds of
+                    thousands of pounds before a bill became due.
+                </p>
+
+                <p>
+                    That realisation changed the direction of the project. Instead of focusing solely on cost
+                    monitoring, I started looking for ways to prevent high-cost actions from happening in the
+                    first place.
+                </p>
+
+                <h2>Detection controls</h2>
+
+                <p>
+                    The first layer of the strategy was detection. I configured monthly budgets in each account, with
+                    normal alerts for expected usage and additional emergency thresholds for unusual spend.
+                </p>
+
+                <p>
+                    Each account now has alerts for:
+                </p>
+
+                <ul>
+                    <li>85% of the monthly budget</li>
+                    <li>100% of the monthly budget</li>
+                    <li>forecasted spend exceeding the budget</li>
+                    <li>emergency thresholds at $50, $100, $200 and $300</li>
+                </ul>
+
+                <p>
+                    The lower budget alerts are useful for normal cost awareness. The higher thresholds are deliberately
+                    different. They are not there for small overspend; they are there to flag that something has gone
+                    badly wrong and needs immediate attention. I call these my 'WTF alerts'.
+                </p>
+
+                <h2>Removing noisy alerts</h2>
+
+                <p>
+                    I also reviewed AWS Cost Anomaly Detection. In practice, it was adding more noise than value for
+                    these small accounts. If I received an anomaly email, I would usually have received a budget alert
+                    at the same time, and I would follow the same investigation process either way.
+                </p>
+
+                <p>
+                    I decided to remove the anomaly alert subscriptions and rely instead on budget alerts plus a
+                    scheduled monthly billing audit. This keeps the alerting model simple and reduces the chance of
+                    ignoring important emails because too many overlapping systems are notifying me.
+                </p>
+
+                <h2>Preventive controls</h2>
+
+                <p>
+                    Having established the monitoring layer, the next step was to add preventive controls using
+                    IAM policies attached to a RestrictedUsers group in each account.
+                </p>
+
+                <p>
+                    The guardrails restrict several high-risk areas:
+                </p>
+
+                <ul>
+                    <li>regions outside the ones I intentionally use</li>
+                    <li>large EC2 instance types and expensive accelerator families</li>
+                    <li>large RDS instance classes</li>
+                    <li>services such as SageMaker, Bedrock, DataZone and EMR</li>
+                    <li>additional analytics services such as Redshift and OpenSearch in non-training accounts</li>
+                </ul>
+
+                <p>
+                    The region restrictions are especially useful in a training account. If I accidentally follow a lab
+                    in the wrong region, or if credentials are ever used somewhere unexpected, AWS now blocks actions
+                    outside the approved regions.
+                </p>
+
+                <!-- OPTIONAL INLINE IMAGE -->
+
+                <div class="engineering-note-inline-image">
+
+                    <a href="../assets/images/engineering-notes/aws-cost-protection-strategy/aws-cost-protection-strategy-instance-launch-blocked.png"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/engineering-notes/aws-cost-protection-strategy/aws-cost-protection-strategy-instance-launch-blocked.png"
+                            alt="AWS EC2 launch failure caused by an explicit deny policy">
+
+                    </a>
+
+                    <p class="engineering-note-image-caption">
+                        IAM guardrails prevented the launch of a high-cost EC2 instance, demonstrating the difference
+                        between detecting unexpected spend and preventing it.
+                    </p>
+
+                </div>
+
+                <h2>Testing the guardrails</h2>
+
+                <p>
+                    After creating the policies, I tested them directly rather than assuming they worked.
+                </p>
+
+                <p>
+                    I confirmed that approved regions still worked, blocked regions returned explicit deny errors, and
+                    attempts to launch a large EC2 instance were stopped by the guardrail policy. I also found that
+                    blocking SageMaker required including Amazon DataZone, because the newer SageMaker Unified Studio
+                    setup uses DataZone behind the scenes.
+                </p>
+
+                <h2>What this does not solve</h2>
+
+                <p>
+                    These controls are mainly designed to stop mistakes and reduce the chance of unexpected costs.
+                    I am the sole administrator for these accounts, but the guardrails
+                    are not a complete defence against a fully compromised administrator account.
+                </p>
+
+                <p>
+                    A compromised administrator account could still remove IAM policies or take a user out of the
+                    RestrictedUsers
+                    group.
+                    Strong MFA, protected root accounts, no unnecessary access keys and careful credential management
+                    remain essential.
+                </p>
+
+                <p>
+                    For stronger account-level controls, I considered AWS Organizations and Service Control
+                    Policies, but I decided against this as I need separate billing for tax-deductible and non-tax
+                    deductible accounts.
+                </p>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    The biggest lesson from this work was that AWS cost management is not just about watching the bill.
+                    Budget alerts are important, but they are detection controls. IAM guardrails add a preventive layer
+                    by stopping selected high-risk actions before they can create charges.
+                </p>
+
+                <p>
+                    The final setup is intentionally simple: monthly audits, budget alerts, emergency thresholds,
+                    approved-region restrictions and deny policies for services and instance types I do not currently
+                    need. It is not a hard spending cap, but it makes expensive mistakes much harder to make
+                    accidentally.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+
+                    <a href="mailto:mailcliffsmith@gmail.com">
+                        Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">
+                        GitHub
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+        const lightbox = document.getElementById('lightbox');
+
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+
+                lightbox.style.display = 'flex';
+
+                lightboxImg.src = trigger.href;
+
+            });
+
+        });
+
+        lightbox.addEventListener('click', () => {
+
+            lightbox.style.display = 'none';
+
+            lightboxImg.src = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>
