@@ -275,6 +275,214 @@ li {
   margin-top: 0;
 }
 
+/* Architecture comparison table */
+
+.comparison-table-wrapper {
+  margin: 2rem 0;
+  overflow-x: auto;
+  border: 1px solid #3b4652;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.comparison-table {
+  width: 100%;
+  min-width: 850px;
+  border-collapse: collapse;
+  background: #ffffff;
+  color: #202830;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 1rem;
+  text-align: left;
+  vertical-align: top;
+  border-right: 1px solid #d8dee4;
+  border-bottom: 1px solid #d8dee4;
+  line-height: 1.6;
+}
+
+.comparison-table th:last-child,
+.comparison-table td:last-child {
+  border-right: none;
+}
+
+.comparison-table tbody tr:last-child th,
+.comparison-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.comparison-table thead th {
+  background: #24313d;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.comparison-table tbody th {
+  width: 18%;
+  background: #eef2f5;
+  color: #202830;
+  font-weight: 600;
+}
+
+.comparison-table tbody td:nth-child(2),
+.comparison-table tbody td:nth-child(3) {
+  width: 28%;
+}
+
+.comparison-table tbody td:last-child {
+  width: 18%;
+  text-align: center;
+}
+
+.comparison-table tbody tr:nth-child(even) td {
+  background: #f7f9fa;
+}
+
+.comparison-table tbody tr:hover td,
+.comparison-table tbody tr:hover th {
+  background: #edf4f7;
+}
+
+.comparison-result {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  white-space: normal;
+}
+
+/* Architecture comparison table */
+
+.comparison-table-wrapper {
+  margin: 2rem 0;
+  overflow-x: auto;
+  border: 1px solid #3b4652;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.comparison-table {
+  width: 100%;
+  min-width: 780px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background: #ffffff;
+  color: #202830;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 1rem;
+  text-align: left;
+  vertical-align: top;
+  border-right: 1px solid #d8dee4;
+  border-bottom: 1px solid #d8dee4;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.comparison-table th:last-child,
+.comparison-table td:last-child {
+  border-right: none;
+}
+
+.comparison-table tbody tr:last-child th,
+.comparison-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.comparison-table thead th {
+  background: #24313d;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.comparison-table thead th:nth-child(1) {
+  width: 20%;
+}
+
+.comparison-table thead th:nth-child(2),
+.comparison-table thead th:nth-child(3) {
+  width: 31%;
+}
+
+.comparison-table thead th:nth-child(4) {
+  width: 18%;
+  text-align: center;
+}
+
+.comparison-table tbody th {
+  background: #eef2f5;
+  color: #202830;
+  font-weight: 600;
+}
+
+.comparison-table tbody td:last-child {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.comparison-table tbody tr:nth-child(even) td {
+  background: #f7f9fa;
+}
+
+.comparison-table tbody tr:hover td,
+.comparison-table tbody tr:hover th {
+  background: #edf1f4;
+}
+
+.comparison-result {
+  display: inline-block;
+  min-width: 94px;
+  max-width: 100%;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  white-space: normal;
+}
+
+.comparison-result.preferred {
+  background: #2f3f4d;
+  color: #ffffff;
+}
+
+.comparison-result.either {
+  background: #eef2f5;
+  color: #2f3f4d;
+  border: 1px solid #9aa7b2;
+}
+
+.comparison-result.chosen {
+  background: #151c22;
+  color: #ffffff;
+}
+
+.comparison-table .comparison-summary th,
+.comparison-table .comparison-summary td {
+  background: #dfe7ec;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .comparison-table-wrapper {
+    border-radius: 6px;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 0.85rem;
+  }
+}
+
 /* LINKS (CONTACT) */
 .links {
   display: flex;
@@ -306,6 +514,13 @@ li {
   border-radius: 8px;
   border: 1px solid #e5e5e5;
   cursor: zoom-in;
+}
+
+.architecture-comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+  align-items: start;
 }
 
 /* CONTENT BLOCKS (PROJECT PAGES) */
@@ -434,6 +649,12 @@ footer {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .architecture-comparison {
+    grid-template-columns: 1fr;
   }
 }
 

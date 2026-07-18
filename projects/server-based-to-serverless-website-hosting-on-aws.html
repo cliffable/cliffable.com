@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Server-Based to Serverless Website Hosting on AWS | Cliffable</title>
+    <meta name="description"
+        content="Deploying and migrating an AWS website from a highly available EC2 architecture to simpler serverless hosting with S3 and CloudFront.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://cliffable.com/projects/server-based-to-serverless-website-hosting-on-aws.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/engineering-notes/">Engineering Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <section class="hero">
+            <div class="container">
+
+                <h1>Server-Based to Serverless Website Hosting on AWS</h1>
+
+                <p>
+                    Deploying a highly available EC2-based website, integrating its serverless microservices and then
+                    migrating
+                    the frontend to Amazon S3 and CloudFront to compare the complexity, cost and operational
+                    requirements of both
+                    architectures.
+                </p>
+
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+
+                <!-- CONTEXT -->
+                <h2>Context</h2>
+
+                <div class="content-block">
+
+                    <p>
+                        This project was completed as part of the AWS Solutions Architect Associate module of the
+                        <a href="https://digitalcloud.training/cloud-mastery-bootcamp/" target="_blank"
+                            rel="noopener noreferrer">
+                            Digital Cloud Training Cloud Mastery Bootcamp
+                        </a>.
+                    </p>
+
+                    <p>
+                        The lab simulated the migration of a legacy portfolio website from a single-server deployment to
+                        AWS.
+                        A pre-built website application, Amazon Machine Image (AMI) and four CloudFormation templates
+                        were
+                        provided as the project baseline. My role was to deploy, configure and integrate these
+                        components,
+                        build a highly available AWS infrastructure, and then migrate the frontend to a serverless
+                        hosting
+                        architecture while preserving the existing microservices.
+                    </p>
+
+                    <p>
+                        To better understand and document the solution, I produced my own architecture diagrams
+                        throughout
+                        the project rather than relying on the reference diagram supplied with the lab.
+                    </p>
+
+                    <p><strong>My responsibilities included:</strong></p>
+
+                    <ul>
+                        <li>Deploying and configuring the EC2-hosted application</li>
+                        <li>Integrating and testing four serverless microservices</li>
+                        <li>Configuring IAM permissions, Function URLs, APIs and S3 event notifications</li>
+                        <li>Building a custom VPC spanning two Availability Zones</li>
+                        <li>Implementing Application Load Balancing, Auto Scaling, CloudFront, ACM and Route 53</li>
+                        <li>Migrating the frontend from EC2 to a private Amazon S3 bucket</li>
+                        <li>Securing the S3 origin using CloudFront Origin Access Control (OAC)</li>
+                        <li>Troubleshooting CORS, caching and application integration issues</li>
+                        <li>Documenting and comparing the server-based and serverless architectures</li>
+                    </ul>
+
+                </div>
+
+                <!-- SERVER-BASED ARCHITECTURE -->
+                <h2>Server-Based Architecture</h2>
+
+                <div class="content-block">
+
+                    <div class="project-architecture">
+                        <a href="../assets/images/server-based-website-architecture.png" class="lightbox-trigger">
+                            <img src="../assets/images/server-based-website-architecture.png"
+                                alt="Highly available server-based AWS website architecture using CloudFront, an Application Load Balancer, Auto Scaling and EC2 instances across two Availability Zones"
+                                class="architecture-diagram">
+                        </a>
+                    </div>
+
+                    <p>
+                        The first stage was to deploy the website on Amazon EC2 and build a highly available
+                        architecture around
+                        it. DNS was handled by Amazon Route 53, with an ACM certificate providing HTTPS and Amazon
+                        CloudFront
+                        delivering content to users.
+                    </p>
+
+                    <p>
+                        Requests reaching the AWS Region were forwarded to an internet-facing Application Load Balancer
+                        deployed
+                        across public subnets in two Availability Zones. The load balancer distributed traffic to EC2
+                        instances
+                        in private subnets through a target group.
+                    </p>
+
+                    <p>
+                        The EC2 instances were managed by an Auto Scaling Group using a launch template based on a
+                        custom AMI
+                        created after the application and microservice integrations had been configured. This allowed
+                        instances
+                        to be replaced or added automatically while keeping them inaccessible directly from the
+                        internet.
+                    </p>
+
+                    <p>
+                        A NAT Gateway allowed the private instances to initiate outbound connections without requiring
+                        public IP
+                        addresses. Separate security groups controlled traffic between the load balancer and EC2
+                        instances.
+                    </p>
+
+                    <p>
+                        This architecture provided high availability through load balancing, automated instance
+                        replacement and
+                        resources spread across two Availability Zones. However, it also required a substantial amount
+                        of
+                        supporting infrastructure for a frontend consisting primarily of static HTML, CSS and JavaScript
+                        files.
+                    </p>
+
+                </div>
+
+                <!-- MICROSERVICES -->
+                <h2>Application Microservices</h2>
+
+                <div class="content-block">
+
+                    <p>
+                        Four CloudFormation templates were provided to deploy most of the serverless application
+                        components.
+                        After deployment, each service still required configuration, integration and testing.
+                    </p>
+
+                    <div class="decision">
+                        <p><strong>View Counter</strong></p>
+
+                        <p class="decision-detail">
+                            A Lambda Function URL provided a public endpoint used by the website to retrieve and update
+                            the page
+                            view count.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Contact Form</strong></p>
+
+                        <p class="decision-detail">
+                            The website submitted contact form data to a Lambda Function URL. The integration initially
+                            failed
+                            because the Function URL CORS configuration did not allow the required POST method and
+                            <code>Content-Type</code> header.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>AWS Latest News</strong></p>
+
+                        <p class="decision-detail">
+                            One Lambda function retrieved AWS RSS content and stored processed entries in DynamoDB. A
+                            second
+                            function exposed the latest entries to the website through a Function URL.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Blog Publishing</strong></p>
+
+                        <p class="decision-detail">
+                            Uploading a text file to an S3 bucket generated an S3 Event Notification that invoked a
+                            Lambda function.
+                            The function converted the text into processed HTML content, which was retrieved through an
+                            HTTP API and
+                            displayed on the portfolio page.
+                        </p>
+                    </div>
+
+                    <p>
+                        The dynamic features were already separated from the frontend. This became important during the
+                        migration
+                        because the hosting layer could be replaced without redesigning the microservices.
+                    </p>
+
+                </div>
+
+                <!-- WHY MIGRATE -->
+                <h2>Why Migrate to Serverless Hosting?</h2>
+
+                <div class="content-block">
+
+                    <p>
+                        Once the server-based architecture was complete, the next stage was to assess whether its
+                        complexity was
+                        justified by the workload.
+                    </p>
+
+                    <p>
+                        The frontend consisted almost entirely of static files. Its dynamic functionality was already
+                        handled by
+                        independent Lambda, DynamoDB, S3 and API services. The EC2 instances were therefore being used
+                        mainly to
+                        serve files that could be stored and delivered directly by managed AWS services.
+                    </p>
+
+                    <p>
+                        The Application Load Balancer, Auto Scaling Group, EC2 instances, NAT Gateway, subnets, route
+                        tables and
+                        security groups all contributed to availability, but they also introduced cost, configuration
+                        and ongoing
+                        operational responsibility.
+                    </p>
+
+                    <p>
+                        Migrating the frontend to Amazon S3 and CloudFront offered a simpler architecture that still met
+                        the
+                        application's availability, scalability and security requirements.
+                    </p>
+
+                </div>
+
+                <!-- SERVERLESS ARCHITECTURE -->
+                <h2>Serverless Architecture</h2>
+
+                <div class="content-block">
+
+                    <div class="project-architecture">
+                        <a href="../assets/images/serverless-website-architecture.png" class="lightbox-trigger">
+                            <img src="../assets/images/serverless-website-architecture.png"
+                                alt="Serverless AWS website architecture using Route 53, CloudFront, Origin Access Control and a private Amazon S3 bucket with Lambda-based microservices"
+                                class="architecture-diagram">
+                        </a>
+                    </div>
+
+                    <p>
+                        In the final architecture, Amazon Route 53 continued to provide DNS and CloudFront continued to
+                        provide
+                        HTTPS delivery and edge caching. The major change was the origin.
+                    </p>
+
+                    <p>
+                        The EC2 hosting layer was replaced with a private Amazon S3 bucket containing the website files.
+                        CloudFront accessed the bucket through Origin Access Control, allowing S3 Block Public Access to
+                        remain
+                        enabled.
+                    </p>
+
+                    <p>
+                        Users could retrieve the website only through CloudFront. The S3 bucket did not need to be
+                        exposed as a
+                        public website endpoint.
+                    </p>
+
+                    <p>
+                        The existing view counter, contact form, AWS Latest News service and blog workflow remained in
+                        place.
+                        The migration changed the frontend hosting architecture without removing the application's
+                        event-driven
+                        functionality.
+                    </p>
+
+                    <p>
+                        The serverless design remained highly available. Amazon S3 Standard stores data redundantly
+                        across
+                        multiple Availability Zones, while CloudFront distributes cached content through its global edge
+                        network.
+                        No server provisioning, load balancing or scaling configuration was required.
+                    </p>
+
+                </div>
+
+                <!-- ARCHITECTURE COMPARISON -->
+                <h2>Architecture Comparison</h2>
+
+                <div class="content-block">
+
+                    <p>
+                        Viewing the two diagrams together shows how much infrastructure was removed when the frontend
+                        migrated to
+                        serverless hosting.
+                    </p>
+
+                    <div class="architecture-comparison">
+
+                        <div class="project-architecture">
+                            <p><strong>Server-Based Architecture</strong></p>
+
+                            <a href="../assets/images/server-based-website-architecture.png" class="lightbox-trigger">
+                                <img src="../assets/images/server-based-website-architecture.png"
+                                    alt="Server-based AWS website architecture before migration"
+                                    class="architecture-diagram">
+                            </a>
+                        </div>
+
+                        <div class="project-architecture">
+                            <p><strong>Serverless Architecture</strong></p>
+
+                            <a href="../assets/images/serverless-website-architecture.png" class="lightbox-trigger">
+                                <img src="../assets/images/serverless-website-architecture.png"
+                                    alt="Serverless AWS website architecture after migration"
+                                    class="architecture-diagram">
+                            </a>
+                        </div>
+
+                    </div>
+
+                    <p><strong>Infrastructure removed from the hosting path:</strong></p>
+
+                    <ul>
+                        <li>Custom VPC</li>
+                        <li>Public and private subnets</li>
+                        <li>Internet Gateway (not shown in diagram)</li>
+                        <li>Route tables (not shown in diagram)</li>
+                        <li>NAT Gateway</li>
+                        <li>Application Load Balancer</li>
+                        <li>Target Group</li>
+                        <li>Auto Scaling Group</li>
+                        <li>Launch Template</li>
+                        <li>EC2 instances</li>
+                        <li>Load balancer and instance security groups</li>
+                    </ul>
+
+                    <p><strong>Services retained:</strong></p>
+
+                    <ul>
+                        <li>Amazon Route 53</li>
+                        <li>AWS Certificate Manager</li>
+                        <li>Amazon CloudFront</li>
+                        <li>AWS Lambda</li>
+                        <li>Amazon DynamoDB</li>
+                        <li>Amazon S3 resources used by the blog workflow</li>
+                        <li>Lambda Function URLs and the HTTP API</li>
+                        <li>Event-driven application workflows</li>
+                    </ul>
+
+                    <div class="comparison-table-wrapper">
+
+                        <table class="comparison-table">
+
+                            <thead>
+                                <tr>
+                                    <th scope="col">Decision factor</th>
+                                    <th scope="col">Server-Based</th>
+                                    <th scope="col">Serverless</th>
+                                    <th scope="col">Verdict</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <th scope="row">Frontend hosting</th>
+                                    <td>EC2 instances behind an Application Load Balancer and CloudFront</td>
+                                    <td>Private S3 bucket behind CloudFront</td>
+                                    <td>
+                                        <span class="comparison-result preferred">
+                                            Serverless
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">High availability</th>
+                                    <td>
+                                        Requires load balancing, Auto Scaling and instances distributed across
+                                        two Availability Zones
+                                    </td>
+                                    <td>
+                                        Provided automatically by Amazon S3 and CloudFront
+                                    </td>
+                                    <td>
+                                        <span class="comparison-result preferred">
+                                            Serverless
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">Scaling</th>
+                                    <td>
+                                        Auto Scaling policies and capacity settings must be configured and maintained
+                                    </td>
+                                    <td>
+                                        Scaling is handled automatically by AWS managed services
+                                    </td>
+                                    <td>
+                                        <span class="comparison-result preferred">
+                                            Serverless
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">Infrastructure to manage</th>
+                                    <td>
+                                        VPC, public and private subnets, NAT Gateway, Application Load Balancer,
+                                        Auto Scaling, EC2, security groups and CloudFront
+                                    </td>
+                                    <td>
+                                        S3, CloudFront and Origin Access Control
+                                    </td>
+                                    <td>
+                                        <span class="comparison-result preferred">
+                                            Serverless
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">Server maintenance</th>
+                                    <td>
+                                        Operating system, web server and application environment require maintenance
+                                    </td>
+                                    <td>
+                                        No servers or operating systems to patch and maintain
+                                    </td>
+                                    <td>
+                                        <span class="comparison-result preferred">
+                                            Serverless
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">Frontend security</th>
+                                    <td>
+                                        Private EC2 instances protected by security groups and accessed through
+                                        the load balancer
+                                    </td>
+                                    <td>
+                                        Private S3 bucket protected by CloudFront Origin Access Control
+                                    </td>
+                                    <td>
+                                        <span class="comparison-result either">
+                                            Either
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th scope="row">Static website hosting</th>
+                                    <td>
+                                        Fully capable, but requires substantial supporting infrastructure
+                                    </td>
+                                    <td>
+                                        Well suited to simple, scalable static content delivery
+                                    </td>
+                                    <td>
+                                        <span class="comparison-result preferred">
+                                            Serverless
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr class="comparison-summary">
+                                    <th scope="row">Overall assessment</th>
+                                    <td>
+                                        Highly available and flexible, but unnecessarily complex for this workload
+                                    </td>
+                                    <td>
+                                        Highly available, simpler to operate and better aligned with the static frontend
+                                    </td>
+                                    <td>
+                                        <span class="comparison-result chosen">
+                                            Serverless
+                                        </span>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <!-- KEY DECISIONS -->
+                <h2>Key Decisions</h2>
+
+                <div class="content-block">
+
+                    <div class="decision">
+                        <p><strong>Place EC2 instances in private subnets</strong></p>
+
+                        <p class="decision-detail">
+                            <strong>Why:</strong> The Application Load Balancer provided the public entry point, so the
+                            instances did
+                            not require public IP addresses or direct internet access.
+                        </p>
+
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> Private instances required additional networking infrastructure,
+                            including a
+                            NAT Gateway for outbound access.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Create a custom AMI for the Auto Scaling Group</strong></p>
+
+                        <p class="decision-detail">
+                            <strong>Why:</strong> The application files, configuration and microservice endpoint changes
+                            needed to be
+                            available on every instance launched by Auto Scaling.
+                        </p>
+
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> Future application changes would require a new AMI or an
+                            automated deployment
+                            process.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Retain the existing serverless microservices</strong></p>
+
+                        <p class="decision-detail">
+                            <strong>Why:</strong> The dynamic application features were already decoupled from the
+                            hosting layer and
+                            continued to work after the frontend migration.
+                        </p>
+
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> The frontend still depended on several independently configured
+                            endpoints and
+                            CORS policies.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Use a private S3 origin with CloudFront Origin Access Control</strong></p>
+
+                        <p class="decision-detail">
+                            <strong>Why:</strong> This allowed CloudFront to retrieve the site while keeping direct
+                            public access to
+                            the bucket blocked.
+                        </p>
+
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> CloudFront and the S3 bucket policy had to be configured
+                            correctly before the
+                            site could be served.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- CHALLENGES -->
+                <h2>Challenges</h2>
+
+                <div class="content-block">
+
+                    <div class="challenge">
+                        <p><strong>Troubleshooting CloudFront after the S3 migration</strong></p>
+
+                        <p class="challenge-detail">
+                            After migrating the frontend to Amazon S3, CloudFront initially failed to
+                            serve the website correctly despite the bucket contents, default root object,
+                            Origin Access Control and bucket policy appearing to be correctly configured.
+                            The issue was ultimately traced to the CloudFront cache and origin request
+                            policy configuration. Switching to the managed
+                            <strong>CachingOptimized</strong> cache policy, with no Origin Request Policy
+                            attached, resolved the problem.
+                        </p>
+
+                        <div class="challenge">
+                            <p><strong>Contact form requests were blocked by CORS</strong></p>
+
+                            <p class="challenge-detail">
+                                The contact form endpoint existed, but browser requests failed because the Function URL
+                                did
+                                not permit
+                                the required POST method and <strong>Content-Type</strong> header. Updating the Function
+                                URL
+                                CORS settings
+                                allowed the browser to submit the request successfully.
+                            </p>
+                        </div>
+
+                        <div class="challenge">
+                            <p><strong>Testing the blog workflow</strong></p>
+
+                            <p class="challenge-detail">
+                                The portfolio page was present, but the publishing process had not initially been
+                                tested.
+                                Uploading a
+                                plain text file to the input bucket confirmed that the S3 Event Notification invoked the
+                                post creation
+                                Lambda, generated processed HTML and made the post available through the HTTP API.
+                                Further
+                                testing
+                                confirmed that multiple posts were supported.
+                            </p>
+                        </div>
+
+                        <div class="challenge">
+                            <p><strong>Maintaining endpoint configuration</strong></p>
+
+                            <p class="challenge-detail">
+                                Several JavaScript files required the correct API or Function URL to be inserted
+                                manually.
+                                Recreating a
+                                CloudFormation stack could generate a different endpoint, requiring the frontend
+                                configuration to be
+                                updated again.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <!-- COST -->
+                    <h2>Cost</h2>
+
+                    <div class="content-block">
+
+                        <p>
+                            This project was completed in a temporary training environment, so long-term
+                            operating costs were not measured.
+                        </p>
+
+                        <p>
+                            Although both architectures use CloudFront, Route 53 and the supporting
+                            serverless microservices, the server-based solution also requires continuously
+                            running infrastructure including EC2, an Application Load Balancer, a NAT
+                            Gateway and EBS storage.
+                        </p>
+
+                        <p>
+                            For a low-traffic static website, migrating the frontend to Amazon S3 removes
+                            these always-on resources, reducing both infrastructure costs and operational
+                            overhead while maintaining high availability.
+                        </p>
+
+                    </div>
+
+                    <!-- LESSONS LEARNED -->
+                    <h2>Lessons Learned</h2>
+
+                    <div class="content-block">
+
+                        <p>
+                            The most important lesson from this project was not simply how to configure the individual
+                            AWS
+                            services.
+                            It was seeing how dramatically the architecture changed when the hosting model was matched
+                            more
+                            closely to
+                            the workload.
+                        </p>
+
+                        <p>
+                            The server-based design successfully delivered high availability. However, it required load
+                            balancing,
+                            Auto Scaling, private networking, outbound routing, instance images and security controls to
+                            keep a
+                            relatively simple frontend available.
+                        </p>
+
+                        <p>
+                            Moving the static files to S3 and CloudFront removed most of this infrastructure while
+                            preserving the same
+                            application functionality. Availability did not disappear; responsibility for it shifted
+                            from
+                            infrastructure that I had to configure to managed AWS services.
+                        </p>
+
+                        <p>
+                            Creating my own architecture diagrams throughout the project was also a valuable part of the
+                            learning
+                            process. The diagrams helped me understand the request path, security boundaries and
+                            dependencies, and
+                            made the reduction in complexity clearly visible after the migration.
+                        </p>
+
+                        <p>
+                            The project reinforced an important architectural principle: the most complex solution is
+                            not
+                            necessarily
+                            the most appropriate one. Where the requirements allow it, choosing managed services and
+                            removing
+                            unnecessary infrastructure can reduce cost, operational overhead and the number of potential
+                            failure
+                            points.
+                        </p>
+
+                    </div>
+
+                    <!-- OUTCOME -->
+                    <h2>Outcome</h2>
+
+                    <div class="content-block">
+
+                        <p>
+                            The project delivered both a highly available server-based website and a complete migration
+                            of
+                            its frontend
+                            to serverless AWS hosting.
+                        </p>
+
+                        <ul>
+                            <li>Deployed and integrated the EC2-based application</li>
+                            <li>Configured and tested four independent serverless microservices</li>
+                            <li>Built a custom multi-AZ VPC architecture</li>
+                            <li>Implemented load balancing and automated EC2 scaling</li>
+                            <li>Protected private EC2 instances from direct internet access</li>
+                            <li>Migrated the frontend to Amazon S3 and CloudFront</li>
+                            <li>Secured the S3 origin using Origin Access Control</li>
+                            <li>Preserved all event-driven application functionality</li>
+                            <li>Resolved CloudFront caching, CORS and integration issues</li>
+                            <li>Documented the migration through original architecture diagrams and this project page</li>
+                        </ul>
+
+                        <p>
+                            The migration replaced infrastructure-managed availability with managed-service availability
+                            while
+                            substantially reducing the number of components required to host the website.
+                        </p>
+
+                    </div>
+
+                    <!-- NEXT STEPS -->
+                    <h2>Next Steps</h2>
+
+                    <div class="content-block">
+
+                        <p>
+                            A logical extension would be to replace the separate public Lambda Function URLs with a
+                            consolidated API
+                            layer using Amazon API Gateway. This could provide a more consistent endpoint structure and
+                            centralised
+                            controls for routing, authentication, throttling and monitoring.
+                        </p>
+
+                        <p>
+                            The frontend deployment could also be automated using a source control and CI/CD workflow,
+                            allowing
+                            changes to be tested and uploaded to S3 automatically before invalidating the relevant
+                            CloudFront cache
+                            paths.
+                        </p>
+
+                        <p>
+                            For a production implementation, I would also review logging, monitoring, alarms, AWS WAF
+                            protection and
+                            tighter CORS restrictions rather than allowing unrestricted origins.
+                        </p>
+
+                    </div>
+
+                </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+                    <a href="mailto:mailcliffsmith@gmail.com">Email</a>
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank"
+                        rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+            trigger.addEventListener('click', event => {
+                event.preventDefault();
+                lightbox.style.display = 'flex';
+                lightboxImg.src = trigger.href;
+                lightboxImg.alt = trigger.querySelector('img').alt;
+            });
+        });
+
+        lightbox.addEventListener('click', () => {
+            lightbox.style.display = 'none';
+            lightboxImg.src = '';
+            lightboxImg.alt = '';
+        });
+    </script>
+
+</body>
+
+</html>
