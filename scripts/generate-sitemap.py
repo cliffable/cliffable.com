@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime, timezone
 
 BASE_URL = "https://cliffable.com"
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -57,9 +58,14 @@ url_entries = []
 
 for file_path in html_files:
     url = generate_url(file_path)
+    last_modified = datetime.fromtimestamp(
+        file_path.stat().st_mtime,
+        tz=timezone.utc
+    ).date().isoformat()
 
     entry = f"""  <url>
     <loc>{url}</loc>
+    <lastmod>{last_modified}</lastmod>
   </url>"""
 
     url_entries.append(entry)
