@@ -826,7 +826,7 @@ line-height: 1.4;
   max-width: 900px;
 }
 
-.homepage-engineering-notes .engineering-note-card:first-child {
+.homepage-engineering-notes .field-note-card:first-child {
   border-top: none;
   padding-top: 0;
 }
@@ -841,10 +841,6 @@ line-height: 1.4;
     gap: 0;
   }
 
-  /*
-   * Allow the elements inside these two wrappers to be
-   * reordered individually within the card.
-   */
   .field-note-thumbnail,
   .field-note-content {
     display: contents;
@@ -858,11 +854,17 @@ line-height: 1.4;
     order: 2;
   }
 
-  .field-note-thumbnail img {
+  .field-note-thumbnail > a {
     order: 3;
+    display: block;
+    margin: 8px 0 0;
+  }
+
+  .field-note-thumbnail img {
+    display: block;
     width: 100%;
     height: auto;
-    margin: 8px 0 0;
+    margin: 0;
   }
 
   .field-note-date {
