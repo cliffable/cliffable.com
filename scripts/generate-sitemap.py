@@ -10,6 +10,7 @@ EXCLUDED_FILES = {
 
 EXCLUDED_DIRS = {
     "assets",
+    "favicon",
     "scripts",
     ".git",
     ".github",
