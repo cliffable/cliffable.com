@@ -836,15 +836,46 @@ line-height: 1.4;
 @media (max-width: 768px) {
 
   .field-note-card {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
-  .field-note-thumbnail {
-    width: 100%;
+  /*
+   * Allow the elements inside these two wrappers to be
+   * reordered individually within the card.
+   */
+  .field-note-thumbnail,
+  .field-note-content {
+    display: contents;
+  }
+
+  .field-note-meta {
+    order: 1;
+  }
+
+  .field-note-card h2 {
+    order: 2;
   }
 
   .field-note-thumbnail img {
+    order: 3;
+    width: 100%;
     height: auto;
+    margin: 8px 0 0;
   }
 
+  .field-note-date {
+    order: 4;
+    margin-top: 6px;
+    margin-bottom: 28px;
+  }
+
+  .field-note-summary {
+    order: 5;
+  }
+
+  .field-note-link {
+    order: 6;
+  }
 }
