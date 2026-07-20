@@ -691,7 +691,7 @@ footer {
   padding-bottom: 80px;
 }
 
-.field-note-card {
+.engineering-note-card {
   display: flex;
   gap: 28px;
 
@@ -700,12 +700,12 @@ footer {
   border-top: 1px solid #242424;
 }
 
-.field-note-thumbnail {
+.engineering-note-thumbnail {
   width: 260px;
   flex-shrink: 0;
 }
 
-.field-note-thumbnail img {
+.engineering-note-thumbnail img {
   display: block;
 
   width: 100%;
@@ -716,23 +716,23 @@ footer {
   border-radius: 6px;
 }
 
-.field-note-content {
+.engineering-note-content {
 max-width: 700px;
 padding-top: 4px;
 }
 
-.field-note-container {
+.engineering-note-container {
   max-width: 820px;
 }
 
-.field-note-meta {
+.engineering-note-meta {
   margin-bottom: 10px;
 
   font-size: 0.9rem;
   color: #888;
 }
 
-.field-note-date {
+.engineering-note-date {
 margin-top: 6px;
 margin-bottom: 0;
 font-size: 0.85rem;
@@ -740,57 +740,57 @@ color: #d0d0d0;
 line-height: 1.4;
 }
 
-.field-note-card h2 {
+.engineering-note-card h2 {
   margin-bottom: 14px;
 }
 
-.field-note-card h2 a {
+.engineering-note-card h2 a {
   color: #f5f5f5;
   text-decoration: none;
 }
 
-.field-note-card h2 a:hover {
+.engineering-note-card h2 a:hover {
   color: #cccccc;
 }
 
-.field-note-summary {
+.engineering-note-summary {
   margin-bottom: 18px;
 
   line-height: 1.7;
   color: #cfcfcf;
 }
 
-.field-note-link {
+.engineering-note-link {
   font-weight: 600;
 
   color: #f5f5f5;
   text-decoration: none;
 }
 
-.field-note-link:hover {
+.engineering-note-link:hover {
   color: #cccccc;
 }
 
 /* ARTICLE CONTENT */
 
-.field-note-content-section {
+.engineering-note-content-section {
   padding-top: 36px;
   padding-bottom: 20px;
 }
 
-.field-note-content-section p,
-.field-note-content-section li {
+.engineering-note-content-section p,
+.engineering-note-content-section li {
   font-size: 1rem;
   line-height: 1.8;
   color: #d0d0d0;
 }
 
-.field-note-content-section p {
+.engineering-note-content-section p {
   margin-bottom: 22px;
 }
 
-.field-note-content-section .field-note-image-caption,
-.field-note-featured-image .field-note-image-caption {
+.engineering-note-content-section .engineering-note-image-caption,
+.engineering-note-featured-image .engineering-note-image-caption {
   font-size: 0.9rem;
   color: #cfcfcf;
 
@@ -800,20 +800,20 @@ line-height: 1.4;
   text-align: center;
 }
 
-.field-note-content-section ul {
+.engineering-note-content-section ul {
   margin-bottom: 28px;
   padding-left: 22px;
 }
 
-.field-note-content-section li {
+.engineering-note-content-section li {
   margin-bottom: 10px;
 }
 
-.field-note-inline-image {
+.engineering-note-inline-image {
   margin: 36px 0;
 }
 
-.field-note-inline-image img {
+.engineering-note-inline-image img {
   width: 100%;
   max-width: 800px;
 
@@ -826,7 +826,7 @@ line-height: 1.4;
   max-width: 900px;
 }
 
-.homepage-engineering-notes .field-note-card:first-child {
+.homepage-engineering-notes .engineering-note-card:first-child {
   border-top: none;
   padding-top: 0;
 }
@@ -835,49 +835,49 @@ line-height: 1.4;
 
 @media (max-width: 768px) {
 
-  .field-note-card {
+  .engineering-note-card {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0;
   }
 
-  .field-note-thumbnail,
-  .field-note-content {
+  .engineering-note-thumbnail,
+  .engineering-note-content {
     display: contents;
   }
 
-  .field-note-meta {
+  .engineering-note-meta {
     order: 1;
   }
 
-  .field-note-card h2 {
+  .engineering-note-card h2 {
     order: 2;
   }
 
-  .field-note-thumbnail > a {
+  .engineering-note-thumbnail > a {
     order: 3;
     display: block;
     margin: 8px 0 0;
   }
 
-  .field-note-thumbnail img {
+  .engineering-note-thumbnail img {
     display: block;
     width: 100%;
     height: auto;
     margin: 0;
   }
 
-  .field-note-date {
+  .engineering-note-date {
     order: 4;
     margin-top: 6px;
     margin-bottom: 28px;
   }
 
-  .field-note-summary {
+  .engineering-note-summary {
     order: 5;
   }
 
-  .field-note-link {
+  .engineering-note-link {
     order: 6;
   }
 }
