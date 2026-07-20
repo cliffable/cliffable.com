@@ -1,5 +1,5 @@
 from pathlib import Path
-from datetime import datetime, timezone
+import subprocess
 
 BASE_URL = "https://cliffable.com"
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +29,25 @@ def should_exclude(path):
 
     return False
 
+def get_last_modified_date(path):
+    relative_path = path.relative_to(ROOT_DIR)
+
+    result = subprocess.run(
+        [
+            "git",
+            "log",
+            "-1",
+            "--format=%cs",
+            "--",
+            relative_path.as_posix(),
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+        cwd=ROOT_DIR,
+    )
+
+    return result.stdout.strip()
 
 def generate_url(path):
     relative_path = path.relative_to(ROOT_DIR)
@@ -58,10 +77,7 @@ url_entries = []
 
 for file_path in html_files:
     url = generate_url(file_path)
-    last_modified = datetime.fromtimestamp(
-        file_path.stat().st_mtime,
-        tz=timezone.utc
-    ).date().isoformat()
+    last_modified = get_last_modified_date(file_path)
 
     entry = f"""  <url>
     <loc>{url}</loc>

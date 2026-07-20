@@ -3,42 +3,79 @@
 
   <url>
     <loc>https://cliffable.com/about.html</loc>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/contact.html</loc>
+    <lastmod>2026-06-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cliffable.com/engineering-notes/a-wordpress-infrastructure-review.html</loc>
+    <lastmod>2026-06-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cliffable.com/engineering-notes/aws-cost-protection-strategy.html</loc>
+    <lastmod>2026-06-24</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/engineering-notes/building-my-first-cicd-pipeline.html</loc>
+    <lastmod>2026-06-20</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/engineering-notes/from-silent-failures-to-automated-alerting.html</loc>
+    <lastmod>2026-06-20</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/engineering-notes/improving-my-local-development-workflow.html</loc>
+    <lastmod>2026-06-20</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/engineering-notes/</loc>
+    <lastmod>2026-06-24</lastmod>
+  </url>
+  <url>
+    <loc>https://cliffable.com/engineering-notes/organising-domains-dns-and-ssl-in-aws.html</loc>
+    <lastmod>2026-06-20</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/engineering-notes/rethinking-backups-after-a-failed-restore.html</loc>
+    <lastmod>2026-06-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cliffable.com/engineering-notes/the-night-monitoring-paid-for-itself.html</loc>
+    <lastmod>2026-06-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cliffable.com/engineering-notes/when-a-1gb-lightsail-instance-wasnt-enough.html</loc>
+    <lastmod>2026-06-20</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/</loc>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/projects/csgl-lightsail-wordpress.html</loc>
+    <lastmod>2026-06-20</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/projects/designing-the-cliffable-brand.html</loc>
+    <lastmod>2026-06-20</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/projects/</loc>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/projects/secure-aws-vpc-with-bastion-host.html</loc>
+    <lastmod>2026-06-20</lastmod>
+  </url>
+  <url>
+    <loc>https://cliffable.com/projects/server-based-to-serverless-website-hosting-on-aws.html</loc>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://cliffable.com/projects/static-site-on-aws.html</loc>
+    <lastmod>2026-06-20</lastmod>
   </url>
 
 </urlset>
