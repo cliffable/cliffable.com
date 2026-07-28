@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Designing a Secure AWS Infrastructure | Cliffable</title>
+    <meta name="description"
+        content="Secure AWS infrastructure using private EC2, bastion access, VPC endpoints and least-privilege IAM, validated without internet access.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://cliffable.com/projects/designing-a-secure-aws-infrastructure.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/engineering-notes/">Engineering Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <section class="hero">
+            <div class="container">
+                <h1>Designing a Secure AWS Infrastructure</h1>
+
+                <p>
+                    Designing, implementing and validating a secure AWS architecture with private networking, controlled
+                    administrative access, Gateway VPC Endpoints and a custom least-privilege IAM policy.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+
+                <!-- CONTEXT -->
+                <h2>Context</h2>
+
+                <div class="content-block">
+                    <p>
+                        This project was built as a security-focused AWS infrastructure challenge. I was given a set of
+                        technical
+                        and security requirements, but not a finished architecture to reproduce.
+                    </p>
+
+                    <p>
+                        Unlike previous labs, I designed the complete architecture in PowerPoint, including the route
+                        tables and IAM permissions policy, before creating any AWS resources. I then implemented the
+                        design, diagnosed the issues that arose and validated the
+                        completed
+                        infrastructure using a supplied Python script.
+                    </p>
+
+                    <p><strong>Key requirements:</strong></p>
+
+                    <ul>
+                        <li>Place the workload EC2 instance in a private subnet with no public IP address.</li>
+                        <li>Provide secure SSH administration without exposing the private instance directly to the
+                            internet.</li>
+                        <li>Allow temporary internet access only while installing the required Python packages.</li>
+                        <li>Provide read-only access to Amazon S3.</li>
+                        <li>Provide read and write access to DynamoDB while preventing delete operations.</li>
+                        <li>Maintain access to S3 and DynamoDB after removing all workload internet connectivity.</li>
+                    </ul>
+                </div>
+
+                <!-- ARCHITECTURE -->
+                <h2>Architecture</h2>
+
+                <div class="content-block">
+                    <div class="project-architecture">
+                        <a href="/assets/images/secure-aws-infrastructure.png" class="lightbox-trigger">
+                            <img src="/assets/images/secure-aws-infrastructure.png"
+                                alt="Secure AWS infrastructure architecture with a bastion host, private EC2 instance, NAT Gateway, S3 and DynamoDB Gateway VPC Endpoints"
+                                class="architecture-diagram">
+                        </a>
+                    </div>
+
+                    <p>
+                        The architecture uses a custom VPC containing one public subnet and one private subnet. A
+                        bastion host in
+                        the public subnet provides the administrative path to the private EC2 instance, which has no
+                        public IP
+                        address.
+                    </p>
+
+                    <p>
+                        A NAT Gateway provided temporary outbound internet access while the required Python packages
+                        were
+                        installed. After installation, its default route was removed from the private route table,
+                        leaving the
+                        workload without internet connectivity while keeping the NAT Gateway available for future use.
+                    </p>
+
+                    <p>
+                        Gateway VPC Endpoints for Amazon S3 and DynamoDB provided private access to AWS services after
+                        the
+                        NAT route was removed, eliminating any dependency on internet connectivity.
+                    </p>
+
+                </div>
+
+                <!-- KEY DECISIONS -->
+                <h2>Key Decisions</h2>
+
+                <div class="content-block">
+
+                    <div class="decision">
+                        <p><strong>Design the architecture before implementation</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> Translating the requirements into a completed diagram first made the
+                            purpose of
+                            each subnet, route, security group and endpoint clear before any resources were created.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> More time was spent planning, but implementation and
+                            troubleshooting became far more straightforward.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Use a bastion host for SSH administration</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> The bastion host provided an administrative entry point while allowing
+                            the
+                            workload instance to remain inside a private subnet with no public IP address.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> The bastion host introduced an additional EC2 instance to
+                            secure, manage and
+                            monitor.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Use a NAT Gateway with temporary routing</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> The private EC2 instance required outbound connectivity while
+                            installing
+                            <code>boto3</code> and its dependencies.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> A NAT Gateway adds cost even when it is not being used. After
+                            installation,
+                            I removed the private route table entry pointing to it, rather than deleting the gateway, so
+                            outbound
+                            internet access could be restored later if required.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Use Gateway VPC Endpoints for S3 and DynamoDB</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> Gateway Endpoints allowed the private instance to communicate with S3
+                            and DynamoDB
+                            without using the public internet or routing traffic through the NAT Gateway.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> Endpoint routes and IAM permissions had to be configured
+                            correctly for each
+                            service.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Create a custom least-privilege IAM policy</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> The workload required a precise combination of read-only S3 access and
+                            read/write
+                            DynamoDB access without delete permissions.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> Writing a custom policy required more care than attaching a
+                            broad AWS-managed
+                            policy, but it avoided granting unnecessary permissions.
+                        </p>
+                    </div>
+
+                    <div class="project-architecture">
+                        <a href="/assets/images/least-privilege-iam-policy.png" class="lightbox-trigger">
+                            <img src="/assets/images/least-privilege-iam-policy.png"
+                                alt="Custom least-privilege AWS IAM policy granting read-only S3 access and read-write DynamoDB access without delete permissions"
+                                class="architecture-diagram">
+                        </a>
+                    </div>
+
+                    <p>
+                        I wrote the IAM permissions policy from scratch rather than attaching a broad AWS-managed
+                        policy. It
+                        grants
+                        <code>GetObject</code> and <code>ListBucket</code> access to Amazon S3, along with the required
+                        DynamoDB
+                        read and write actions. Delete permissions were intentionally excluded.
+                    </p>
+
+                    <p>
+                        The custom policy was attached to an IAM role assigned to the private EC2 instance, enforcing
+                        least-privilege access to Amazon S3 and DynamoDB.
+                    </p>
+
+                </div>
+
+                <!-- CHALLENGES -->
+                <h2>Challenges</h2>
+
+                <div class="content-block">
+
+                    <div class="challenge">
+                        <p><strong>Connecting from the bastion host to the private instance</strong></p>
+                        <p class="challenge-detail">
+                            My initial SSH approach failed because the private EC2 instance required key-pair
+                            authentication. I launched a replacement instance with the
+                            correct key pair and successfully connected through the bastion host.
+                        </p>
+                    </div>
+
+                    <div class="challenge">
+                        <p><strong>Missing IAM credentials on the replacement EC2 instance</strong></p>
+                        <p class="challenge-detail">
+                            The validation script initially failed after the EC2 instance was replaced. Networking and
+                            endpoint
+                            access appeared correct, so I checked the instance credentials and discovered that the
+                            replacement
+                            instance had been launched without the required IAM role. Attaching the correct IAM role
+                            resolved the issue and the validation script completed successfully.
+                        </p>
+                    </div>
+
+                    <div class="challenge">
+                        <p><strong>Removing internet access without breaking AWS service connectivity</strong></p>
+                        <p class="challenge-detail">
+                            After installing the required software, I removed the default route to the NAT Gateway from
+                            the private
+                            route table and confirmed that the instance could no longer reach the public internet. S3
+                            and DynamoDB
+                            operations continued to work through their Gateway VPC Endpoints, proving that the private
+                            service paths
+                            were configured correctly.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- COST -->
+                <h2>Cost</h2>
+
+                <div class="content-block">
+                    <p>
+                        <strong>Infrastructure cost:</strong> Minimal short-term lab cost. The environment was created
+                        for
+                        implementation and validation rather than continuous operation.
+                    </p>
+
+                    <ul>
+                        <li>EC2 instances → charged only while the bastion and private instances were running.</li>
+                        <li>NAT Gateway → retained for possible future use and continued to incur an hourly charge while
+                            deployed.</li>
+                        <li>Gateway VPC Endpoints for S3 and DynamoDB → no hourly endpoint charge.</li>
+                        <li>Amazon S3 and DynamoDB → negligible usage during validation.</li>
+                    </ul>
+
+                    <p>
+                        The NAT Gateway remained deployed, but removing its route from the private subnet eliminated
+                        internet
+                        access while preserving the option to restore connectivity later.
+                    </p>
+
+                </div>
+
+                <!-- OUTCOME -->
+                <h2>Outcome</h2>
+
+                <div class="content-block">
+                    <p>
+                        The completed infrastructure met all of the original security and access requirements. The final
+                        validation
+                        script confirmed that the workload retained only the intended network paths and AWS permissions.
+                    </p>
+
+                    <ul>
+                        <li>SSH access through the bastion host succeeded.</li>
+                        <li>The private EC2 instance had no public IP address and no active route to the internet.</li>
+                        <li>Amazon S3 read operations succeeded.</li>
+                        <li>Amazon S3 write operations were denied.</li>
+                        <li>DynamoDB read and write operations succeeded.</li>
+                        <li>DynamoDB delete operations were denied.</li>
+                        <li>IAM role credentials were supplied automatically to the instance.</li>
+                        <li>S3 and DynamoDB remained accessible after the route to the NAT Gateway was removed.</li>
+                        <li>The supplied infrastructure validation script completed successfully.</li>
+                    </ul>
+
+                    <p>
+                        This project marked a significant step towards independent cloud architecture, from translating
+                        requirements into a design through to implementation, troubleshooting and successful validation.
+                    </p>
+
+                    <p>
+                        Related projects can be viewed on the
+                        <a href="/projects/">AWS architecture projects page</a>.
+                    </p>
+                </div>
+
+                <!-- NEXT STEPS -->
+                <h2>Next Steps</h2>
+
+                <div class="content-block">
+                    <p>
+                        A production version of this architecture could replace the bastion host with AWS Systems
+                        Manager
+                        Session Manager, eliminating inbound SSH access.
+                    </p>
+
+                    <p>
+                        It could also be deployed across multiple Availability Zones, managed with CloudFormation and
+                        enhanced
+                        with additional monitoring and logging.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+                    <a href="mailto:mailcliffsmith@gmail.com">Email</a>
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank"
+                        rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+            trigger.addEventListener('click', event => {
+                event.preventDefault();
+                lightbox.style.display = 'flex';
+                lightboxImg.src = trigger.href;
+
+                const triggerImage = trigger.querySelector('img');
+                lightboxImg.alt = triggerImage ? triggerImage.alt : '';
+            });
+        });
+
+        lightbox.addEventListener('click', () => {
+            lightbox.style.display = 'none';
+            lightboxImg.src = '';
+            lightboxImg.alt = '';
+        });
+    </script>
+</body>
+
+</html>
