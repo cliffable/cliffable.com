@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Event-Driven Website Monitoring System on AWS | Cliffable</title>
+    <meta name="description"
+        content="An event-driven AWS website monitoring system using Lambda, EventBridge Scheduler and SNS to automate availability checks and email alerts.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical"
+        href="https://cliffable.com/projects/designing-an-event-driven-website-monitoring-system.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/engineering-notes/">Engineering Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <section class="hero">
+            <div class="container">
+                <h1>Designing an Event-Driven Website Monitoring System</h1>
+
+                <p>
+                    I designed and built a secure serverless website architecture together with an event-driven
+                    monitoring system that automatically validates website availability and sends email notifications.
+                    The solution demonstrates serverless architecture, event-driven automation and the use of managed
+                    AWS services.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <div class="container">
+
+                <!-- CONTEXT -->
+                <h2>Context</h2>
+
+                <div class="content-block">
+
+                    <p>
+                        This project was completed as one of the capstone projects in the Digital Cloud Training 'AWS
+                        Solutions Architect (Associate)' module. The project brief was provided as part of the course,
+                        while the
+                        architecture, implementation, testing and documentation shown here are my own work.
+                    </p>
+
+                    <p>
+                        The objective was to create an event-driven monitoring solution that automatically checks
+                        website availability and sends email notifications based on the result.
+                    </p>
+
+                    <p>
+                        The monitored website was hosted as a private static website on AWS. The monitoring components
+                        were implemented using AWS Lambda, Amazon EventBridge Scheduler and Amazon SNS.
+                    </p>
+
+                    <p><strong>Key requirements:</strong></p>
+                    <ul>
+                        <li>Use a fully serverless architecture with no continuously running compute resources.</li>
+                        <li>Check the public CloudFront website endpoint automatically on a defined schedule.</li>
+                        <li>Send email notifications for both successful and failed availability checks.</li>
+                        <li>Keep IAM permissions limited to the actions and resources required by each component.</li>
+                        <li>Test both healthy and unavailable website states end to end.</li>
+                    </ul>
+                </div>
+
+                <!-- ARCHITECTURE -->
+                <h2>Architecture</h2>
+
+                <div class="content-block">
+                    <div class="project-architecture">
+                        <a href="../assets/images/serverless-website-monitoring-architecture.png"
+                            class="lightbox-trigger">
+                            <img src="../assets/images/serverless-website-monitoring-architecture.png"
+                                alt="AWS event-driven serverless website monitoring architecture using CloudFront, private S3, EventBridge Scheduler, Lambda and SNS"
+                                class="architecture-diagram">
+                        </a>
+                    </div>
+
+                    <p>
+                        Amazon EventBridge Scheduler invokes a Lambda function at regular intervals. The function sends
+                        an HTTPS
+                        request to the website's CloudFront URL and evaluates the returned response.
+                    </p>
+
+                    <p>
+                        The website content is stored in a private S3 bucket and can be accessed only through CloudFront
+                        using
+                        Origin Access Control. This allows the monitoring function to test the same public endpoint that
+                        a real
+                        website visitor would use rather than checking the underlying storage service directly.
+                    </p>
+
+                    <p>
+                        After evaluating the result, Lambda publishes a status message to an SNS topic. Amazon SNS then
+                        delivers
+                        the notification to a confirmed email subscription.
+                    </p>
+
+                    <p>
+                        Lambda uses a dedicated execution role for logging and publishing to SNS. EventBridge Scheduler
+                        uses a
+                        separate managed role that permits it to invoke only the monitoring function.
+                    </p>
+                </div>
+
+                <!-- KEY DECISIONS -->
+                <h2>Key Decisions</h2>
+
+                <div class="content-block">
+
+                    <div class="decision">
+                        <p><strong>Monitor the CloudFront endpoint rather than the S3 bucket</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> CloudFront was the public entry point for the website. Testing it
+                            verified the
+                            complete delivery path that a visitor would use, including CloudFront and access to the
+                            private S3
+                            origin.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> CloudFront caching can sometimes return previously cached
+                            content even when
+                            the origin has changed, so cache behaviour must be considered when interpreting monitoring
+                            results.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Use EventBridge Scheduler instead of continuously running compute</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> Website checks are short, periodic tasks. EventBridge Scheduler and
+                            Lambda provide
+                            the required automation without an EC2 instance, container or persistent monitoring server.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> Scheduled checks confirm availability only at the configured
+                            interval. A
+                            failure that begins and ends between checks may not be detected.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Use SNS for email notifications</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> SNS provides a simple managed method of distributing monitoring
+                            results without
+                            adding an email server or third-party notification platform.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> Basic SNS emails are functional rather than highly formatted and
+                            provide
+                            limited control over presentation.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Remove Route 53 and ACM from the design</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> The default CloudFront domain already provided a public HTTPS endpoint
+                            suitable for
+                            testing, so a custom domain and separate certificate were unnecessary.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> The website used a CloudFront-generated hostname rather than a
+                            branded
+                            domain.
+                        </p>
+                    </div>
+
+                    <div class="decision">
+                        <p><strong>Restrict Lambda to one SNS topic</strong></p>
+                        <p class="decision-detail">
+                            <strong>Why:</strong> The Lambda execution role used a custom inline policy allowing
+                            <code>sns:Publish</code> only to the SiteMonitor topic rather than granting broad access to
+                            SNS.
+                        </p>
+                        <p class="decision-detail">
+                            <strong>Trade-off:</strong> The IAM policy would need to be updated if the function later
+                            published to
+                            additional topics.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- IMPLEMENTATION -->
+                <h2>Implementation</h2>
+
+                <div class="content-block">
+                    <p>
+                        After configuring the website infrastructure, I implemented the monitoring workflow by
+                        configuring Lambda, Amazon SNS and EventBridge Scheduler to perform automated availability
+                        checks and send notifications.
+                    </p>
+
+                    <p>
+                        The Lambda function was configured with environment variables containing the monitored site
+                        details and
+                        the SNS topic ARN. When invoked, it sent an HTTPS GET request to the CloudFront URL, evaluated
+                        the response
+                        and published the result to SNS.
+                    </p>
+
+                    <p>
+                        The Lambda execution role included the AWS-managed
+                        <code>AWSLambdaBasicExecutionRole</code> policy for CloudWatch logging and a custom inline
+                        policy permitting
+                        <code>sns:Publish</code> only to the required SNS topic.
+                    </p>
+
+                    <p>
+                        EventBridge Scheduler was configured to invoke the function automatically. A one-minute interval
+                        was used
+                        during testing so that successful and failed checks could be verified quickly. A less frequent
+                        schedule,
+                        such as every five minutes, would be more appropriate for normal operation.
+                    </p>
+                </div>
+
+                <!-- CHALLENGES -->
+                <h2>Challenges</h2>
+
+                <div class="content-block">
+
+                    <div class="challenge">
+                        <p><strong>Resolving an unexpected 403 error</strong></p>
+                        <p class="challenge-detail">
+                            When I first tested the solution, CloudFront returned a 403 Forbidden error even though the
+                            website content
+                            had been uploaded successfully. The issue was that the CloudFront distribution had no
+                            default root object
+                            configured, so requests to the site root could not resolve <code>index.html</code>. After
+                            identifying and
+                            correcting the configuration, the website loaded as expected. I also added this reminder to
+                            the architecture
+                            diagram as a useful reference for future projects and as a practical troubleshooting tip for
+                            other AWS
+                            students building similar solutions.
+                        </p>
+                    </div>
+
+                    <div class="challenge">
+                        <p><strong>Testing the failure path safely</strong></p>
+                        <p class="challenge-detail">
+                            A successful health check did not prove that the monitoring workflow would detect a real
+                            outage. To
+                            create a controlled failure, I renamed the website's <code>index.html</code> object.
+                            CloudFront then
+                            returned a 403 response, which Lambda detected before publishing a failure notification
+                            through SNS.
+                            Restoring the object returned the website to its healthy state.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- TESTING -->
+                <h2>Testing</h2>
+
+                <div class="content-block">
+                    <p>
+                        I tested the system across its complete workflow rather than verifying each AWS service only in
+                        isolation.
+                    </p>
+
+                    <ul>
+                        <li>
+                            <strong>Healthy website:</strong> Lambda received a successful response from CloudFront and
+                            SNS delivered
+                            a success email.
+                        </li>
+                        <li>
+                            <strong>Unavailable website:</strong> Renaming <code>index.html</code> caused CloudFront to
+                            return a 403
+                            response, which produced a failure email.
+                        </li>
+                        <li>
+                            <strong>Scheduled execution:</strong> EventBridge Scheduler invoked the Lambda function
+                            automatically
+                            every minute during testing.
+                        </li>
+                        <li>
+                            <strong>IAM permissions:</strong> Lambda could publish to the designated SNS topic without
+                            requiring
+                            broader SNS access.
+                        </li>
+                    </ul>
+
+                    <p>
+                        After successful end-to-end testing, the AWS resources were decommissioned.
+                    </p>
+
+                    <div class="project-architecture">
+                        <a href="../assets/images/serverless-website-monitoring-results.png" class="lightbox-trigger">
+                            <img src="../assets/images/serverless-website-monitoring-results.png"
+                                alt="EventBridge website monitoring schedule with successful and failed Amazon SNS email notifications"
+                                class="architecture-diagram">
+                        </a>
+                    </div>
+
+                    <p>
+                        The test evidence above shows the EventBridge schedule together with the successful and failed
+                        SNS email
+                        notifications generated by the monitoring workflow.
+                    </p>
+                </div>
+
+                <!-- COST -->
+                <h2>Cost</h2>
+
+                <div class="content-block">
+
+                    <p>
+                        Cost was not a primary design consideration for this project. The objective was to design and
+                        validate a
+                        serverless monitoring solution that met the project requirements rather than optimise for
+                        production operating
+                        costs.
+                    </p>
+
+                    <p>
+                        The architecture uses managed AWS services with no continuously running compute resources, so
+                        infrastructure
+                        costs for a project of this size remain very low. During development, the environment was used
+                        only for testing
+                        before being decommissioned on completion.
+                    </p>
+
+                    <p>
+                        In a production environment, operating costs would depend primarily on the monitoring frequency,
+                        the number of
+                        websites being checked and the volume of notifications generated.
+                    </p>
+
+                </div>
+
+                <!-- OUTCOME -->
+                <h2>Outcome</h2>
+
+                <div class="content-block">
+                    <p>
+                        End-to-end testing confirmed that scheduled health checks, failure detection and automated email
+                        notifications all operated as designed.
+                    </p>
+
+                    <ul>
+                        <li>Designed an event-driven serverless monitoring architecture.</li>
+                        <li>Protected the S3 origin using CloudFront Origin Access Control.</li>
+                        <li>Automated website checks using EventBridge Scheduler and Lambda.</li>
+                        <li>Applied least-privilege access to SNS publishing.</li>
+                        <li>Verified both success and failure paths end to end.</li>
+                        <li>Identified a logical flaw in the supplied Lambda validation code.</li>
+                        <li>Produced a custom architecture diagram and documented test evidence.</li>
+                    </ul>
+
+                    <p>
+                        The project demonstrated how several small managed AWS services can be combined into a complete
+                        operational
+                        workflow with scheduling, execution, validation and notification.
+                    </p>
+
+                    <p>
+                        Related projects can be viewed on the
+                        <a href="/projects/">AWS architecture projects page</a>.
+                    </p>
+                </div>
+
+                <!-- LESSONS LEARNED -->
+                <h2>Lessons Learned</h2>
+
+                <div class="content-block">
+                    <p>
+                        Monitoring should test the public endpoint used by real visitors wherever possible. Checking the
+                        S3 bucket
+                        directly would have confirmed that the content existed, but it would not have tested whether
+                        CloudFront
+                        could deliver it successfully.
+                    </p>
+
+                    <p>
+                        Scheduled serverless functions are well suited to short monitoring tasks because the system
+                        consumes
+                        resources only when a check is performed. This avoids maintaining an always-running monitoring
+                        server for a
+                        lightweight workload.
+                    </p>
+
+                </div>
+
+                <!-- NEXT STEPS -->
+                <h2>Next Steps</h2>
+
+                <div class="content-block">
+                    <p>
+                        The current design provides a working foundation for a broader monitoring platform. Possible
+                        improvements
+                        include:
+                    </p>
+
+                    <ul>
+                        <li>Monitoring multiple websites from a single function or configuration source.</li>
+                        <li>Publishing custom CloudWatch metrics for availability and latency.</li>
+                        <li>Creating alarms based on repeated failures rather than sending an email after every check.
+                        </li>
+                        <li>Creating an HTML status dashboard showing current and historical results.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+                    <a href="mailto:mailcliffsmith@gmail.com">Email</a>
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank"
+                        rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">GitHub</a>
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+            trigger.addEventListener('click', event => {
+                event.preventDefault();
+                lightbox.style.display = 'flex';
+                lightboxImg.src = trigger.href;
+                lightboxImg.alt = trigger.querySelector('img').alt;
+            });
+        });
+
+        lightbox.addEventListener('click', () => {
+            lightbox.style.display = 'none';
+            lightboxImg.src = '';
+            lightboxImg.alt = '';
+        });
+    </script>
+</body>
+
+</html>
