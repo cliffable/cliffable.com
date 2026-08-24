@@ -1,6 +1,6 @@
 # cliffable.com — Static Site on AWS
 
-![AWS Static Site Architecture](assets/images/cloudfront-s3-static-site-architecture.png)
+![AWS Static Site Architecture](assets/images/projects/static-site-on-aws/cloudfront-s3-static-site-architecture.png)
 
 ## Overview
 
