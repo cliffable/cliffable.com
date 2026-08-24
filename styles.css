@@ -103,6 +103,13 @@ header {
   margin-bottom: 16px;
 }
 
+.hero .project-date {
+  color: #888;
+  font-size: 0.9rem;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+
 .homepage-certifications {
   display: flex;
   align-items: center;
