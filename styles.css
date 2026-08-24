@@ -103,6 +103,57 @@ header {
   margin-bottom: 16px;
 }
 
+.homepage-certifications {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.homepage-certifications a {
+  display: block;
+}
+
+.homepage-certifications img {
+  width: 90px;
+  height: auto;
+  display: block;
+}
+
+.hero .homepage-certifications p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* CERTIFICATIONS */
+.certifications-grid {
+  display: flex;
+  gap: 48px;
+  margin-top: 24px;
+}
+
+.certification-card {
+  width: 220px;
+}
+
+.certification-card img {
+  width: 150px;
+  height: auto;
+  display: block;
+  margin-bottom: 18px;
+}
+
+.certification-card h3 {
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.certification-card > a:last-child {
+  font-size: 0.9rem;
+}
+
 .button {
   display: inline-block;
   padding: 14px 22px;
@@ -245,6 +296,22 @@ li {
 }
 
 /* ABOUT */
+/* ABOUT PAGE */
+.about-page .about-content {
+  display: block;
+}
+
+.about-page .about-photo {
+  float: left;
+  margin: 0 24px 12px 0;
+}
+
+.about-page .about-content::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
 .about-content {
   display: flex;
   gap: 24px;
@@ -881,3 +948,4 @@ line-height: 1.4;
     order: 6;
   }
 }
+
