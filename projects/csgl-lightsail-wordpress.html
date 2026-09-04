@@ -58,7 +58,7 @@
       <div class="container">
         <h1>WordPress on AWS Lightsail</h1>
 
-        <p class="project-date">Completed January 2026 · Updated May 2026</p>
+        <p class="project-date">Completed January 2026 · Updated September 2026</p>
 
         <p>
           This project documents the migration of a live WordPress business website to AWS Lightsail, including DNS,
@@ -111,20 +111,12 @@
 
           <p>
             The website originally ran on an Amazon Lightsail instance in the London region using a Bitnami WordPress
-            stack.
+            stack, with a static IP, DNS and SSL providing a stable HTTPS endpoint.
           </p>
+
           <p>
-            Traffic is directed to the site through DNS, with a static IP attached to the instance so the endpoint
-            remains stable. SSL was configured for HTTPS, and the original recovery model combined Lightsail snapshots
-            with S3-based backups.
-          </p>
-          <p>
-            This architecture was appropriate because it kept the stack simple while still covering the core production
-            requirements: a fixed public endpoint, encrypted traffic, DNS control, and a practical backup strategy.
-          </p>
-          <p>
-            For a single WordPress business site, Lightsail provided enough flexibility without the overhead of
-            designing a more complex multi-service AWS environment.
+            The original recovery model combined Lightsail snapshots with S3-based backups. Lightsail kept the
+            production stack simple and cost-effective without the overhead of a more complex EC2-based architecture.
           </p>
         </div>
 
@@ -218,7 +210,7 @@
           </p>
         </div>
 
-        <h2>Current Production Architecture</h2>
+        <h2>Production Architecture — May 2026</h2>
 
         <div class="content-block">
           <div class="project-architecture">
@@ -231,24 +223,13 @@
           </div>
 
           <p>
-            The current production architecture combines AWS Lightsail hosting with automated snapshots, monitoring,
-            alerting and rollback recovery workflows.
+            By May 2026, the architecture had evolved to include automated snapshots, external health checks,
+            CloudWatch monitoring, SNS alerts and a tested recovery workflow.
           </p>
 
           <p>
-            The production WordPress site runs on the official AWS Lightsail WordPress blueprint in eu-west-2, using a
-            static IP and DNS-based routing for stable public access.
-          </p>
-
-          <p>
-            Automated daily snapshots provide short-term recovery, while EventBridge-triggered Lambda snapshots provide
-            longer-term retention. CloudWatch alarms, Route 53 health checks and SNS notifications monitor availability
-            and operational health.
-          </p>
-
-          <p>
-            A separate recovery instance workflow allows snapshots to be restored and tested before cutover, reducing
-            operational risk during migration and disaster recovery scenarios.
+            The WordPress site remained on Lightsail in eu-west-2, with a separate recovery instance allowing
+            snapshots to be restored and tested before production cutover.
           </p>
         </div>
 
@@ -270,11 +251,6 @@
           <p>
             An EventBridge schedule triggers a Lambda function to create weekly snapshots, with CloudWatch monitoring
             and SNS email alerts for failure detection.
-          </p>
-
-          <p>
-            This design improves both short-term recovery capability and long-term operational resilience without
-            requiring manual intervention.
           </p>
         </div>
 
@@ -298,14 +274,10 @@
           </ul>
 
           <p>
-            The migration preserved the live domain, Google Workspace mail flow, contact forms, analytics, SSL, backups
-            and rollback capability.
+            The migration preserved the live domain, email, SSL and recovery systems while moving production onto
+            the official AWS Lightsail WordPress blueprint.
           </p>
 
-          <p>
-            The final platform now runs on the official AWS Lightsail WordPress blueprint with a simpler recovery model,
-            working automated snapshots and reduced operational complexity.
-          </p>
         </div>
 
         <h2>Monitoring & Operational Stability</h2>
@@ -313,13 +285,8 @@
         <div class="content-block">
 
           <p>
-            After migration to the official Lightsail WordPress blueprint, the production site experienced intermittent
-            instability caused by memory pressure on a 1 GB instance with no swap configured.
-          </p>
-
-          <p>
-            Investigation showed the issue was most likely caused by temporary RAM exhaustion during periods of
-            increased WordPress, Apache or background maintenance activity.
+            After migration, the production site experienced intermittent instability caused by memory pressure on
+            the 1 GB Lightsail instance, which had no swap configured.
           </p>
 
           <p><strong>Operational improvements implemented:</strong></p>
@@ -333,18 +300,12 @@
           </ul>
 
           <p>
-            These changes improved operational visibility and significantly strengthened the resilience of the
-            production environment. Shortly after deployment, the monitoring system detected a genuine production outage
-            caused by memory exhaustion on the 1 GB instance, leading to further investigation, capacity analysis and an
-            eventual upgrade to a 2 GB plan.
+            Shortly after deployment, the monitoring system detected a genuine production outage caused by memory
+            exhaustion. Further investigation and capacity analysis eventually led to an upgrade from 1 GB to 2 GB.
           </p>
 
           <p>
-            The monitoring alerts and security-related events that followed prompted a wider review of the platform,
-            resulting in additional WordPress hardening, DNS consolidation and a review of domain management processes.
-          </p>
-
-          <p>
+            The incidents also prompted a wider review of WordPress security and infrastructure.
             <a href="../engineering-notes/a-wordpress-infrastructure-review.html">
               Read: A WordPress Infrastructure Review →
             </a>
@@ -369,66 +330,63 @@
           <p><strong>Previous hosting cost:</strong> £94.80/month (incl. VAT)</p>
           <p><strong>Cost reduction:</strong> ~92–94%</p>
 
-          <p>
-            Costs temporarily increased during migration, restore testing and snapshot redesign work due to additional
-            Lightsail instances and snapshots running in parallel.
-          </p>
-
-          <p>
-            The redesign improved recoverability without materially changing the overall cost of the platform.
-          </p>
         </div>
 
         <h2>Outcome</h2>
 
         <div class="content-block">
+
           <p>
-            The project successfully moved a live business website onto AWS, improved its recovery model after a real
-            production incident, and later migrated the platform away from the deprecated Bitnami blueprint to the
-            official AWS Lightsail WordPress stack.
+            The project successfully moved a live business website from managed hosting to AWS and developed into
+            a production platform with automated recovery, monitoring and security controls.
           </p>
 
           <ul>
-            <li>The site is live in production on the official AWS Lightsail WordPress blueprint.</li>
-            <li>HTTPS, redirects, contact forms, analytics and Google Workspace mail flow are working correctly.</li>
-            <li>Typical monthly hosting cost was reduced by ~92–94% compared with the previous managed hosting setup.
-            </li>
-            <li>Recovery and monitoring now include automated snapshots, rollback workflows, Route 53 health checks,
-              CloudWatch alarms and SNS alerting.</li>
-            <li>
-              Monitoring later detected a real production outage, leading to the identification of memory pressure
-              issues and an upgrade from a 1 GB to 2 GB Lightsail instance.
-            </li>
-            <li>
-              A subsequent infrastructure review led to WordPress hardening, DNS consolidation into Route 53 and the
-              identification of domain transfer issues that are being resolved as part of an ongoing migration away from
-              the registrar.
-            </li>
-            <li>The platform now balances simplicity, cost control, recoverability and operational reliability.</li>
+            <li>Production WordPress hosting on AWS Lightsail</li>
+            <li>~92–94% lower hosting cost than the previous managed hosting</li>
+            <li>Automated snapshots and tested recovery workflows</li>
+            <li>Route 53 health checks, CloudWatch monitoring and SNS alerts</li>
+            <li>Migration from the deprecated Bitnami stack to the official Lightsail WordPress blueprint</li>
+            <li>Domain and DNS management consolidated in Route 53</li>
+            <li>CloudFront and AWS WAF added to protect the production site</li>
           </ul>
-          <h2>Next Steps</h2>
-
-          <div class="content-block">
-
-            <p>
-              The platform is now stable and operating with automated backups, monitoring and alerting. Future
-              improvements will focus on security, resilience and operational maturity.
-            </p>
-
-            <ul>
-              <li>Complete the transfer of domain registrations from Xilo to Amazon Route 53 once the current registry
-                transfer lock expires</li>
-              <li>Place the production site behind CloudFront to improve performance, reduce direct exposure of the
-                Lightsail instance and provide a foundation for additional security controls</li>
-              <li>Evaluate AWS WAF integration to provide protection against common web attacks and automated scanning
-                activity</li>
-              <li>Continue monitoring resource utilisation on the upgraded 2 GB instance to validate long-term capacity
-                requirements</li>
-            </ul>
-
-          </div>
 
         </div>
+
+<h2>Project Update — September 2026</h2>
+
+<div class="content-block">
+
+  <p>
+    Following further production instability and sustained automated login attempts, the architecture was
+    extended to reduce direct exposure of the WordPress server.
+  </p>
+
+  <div class="project-architecture">
+    <a href="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
+      class="lightbox-trigger">
+      <img
+        src="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
+        alt="Current CSGL production architecture using Route 53, CloudFront, AWS WAF and a protected Lightsail WordPress origin"
+        class="architecture-diagram">
+    </a>
+  </div>
+
+  <p>
+    Domain and DNS management are now consolidated in Route 53, with public traffic passing through
+    CloudFront and AWS WAF. The Lightsail origin is protected against direct access using a dedicated
+    origin hostname and secret CloudFront header.
+  </p>
+
+  <p>
+    <a href="../engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf.html">
+      Read: Migrating a Production WordPress Site to CloudFront and AWS WAF →
+    </a>
+  </p>
+
+</div>
+
+      </div>
     </section>
   </main>
 

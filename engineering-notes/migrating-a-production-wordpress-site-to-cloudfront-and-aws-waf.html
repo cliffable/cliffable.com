@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+    ENGINEERING NOTE
+    Migrating a Production WordPress Site to CloudFront and AWS WAF
+    -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Migrating a Production WordPress Site to CloudFront and AWS WAF | Cliffable</title>
+
+    <meta name="description"
+        content="Migrating a live AWS Lightsail WordPress site behind CloudFront and AWS WAF, consolidating DNS in Route 53 and protecting the production origin.">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="canonical"
+        href="https://cliffable.com/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf.html">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../styles.css">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L41X6NGBMK"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+
+        gtag('config', 'G-L41X6NGBMK');
+    </script>
+
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+
+            <div class="logo">
+                <a href="/">
+                    <img src="/assets/logos/cliffable-logo-white-v2.svg" alt="Cliffable logo" height="60">
+                </a>
+            </div>
+
+            <nav class="main-nav">
+                <a href="/projects/">Projects</a>
+                <a href="/engineering-notes/">Engineering Notes</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero engineering-note-article-hero">
+            <div class="container engineering-note-container">
+
+                <p class="engineering-note-article-meta">
+                    AWS • Security • Operations
+                </p>
+
+                <p class="engineering-note-date">
+                    Published 4 September 2026
+                </p>
+
+                <h1>Migrating a Production WordPress Site to CloudFront and AWS WAF</h1>
+
+                <p class="engineering-note-intro">
+                    Consolidating domain and DNS management in AWS, removing Cloudflare and Xilo,
+                    and placing a live Lightsail WordPress site behind CloudFront and AWS WAF without
+                    disrupting the website or business email.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- FEATURED IMAGE -->
+
+        <section class="engineering-note-featured-image">
+            <div class="container engineering-note-container">
+
+                <a href="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
+                    class="lightbox-trigger">
+
+                    <img src="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
+                        alt="Current production architecture showing Route 53, CloudFront, AWS WAF and a protected AWS Lightsail WordPress origin">
+
+                </a>
+
+                <p class="engineering-note-image-caption">
+                    Current CSGL production architecture after migrating public traffic through
+                    Route 53, CloudFront and AWS WAF.
+                </p>
+
+            </div>
+        </section>
+
+        <!-- ARTICLE CONTENT -->
+
+        <section class="engineering-note-content-section">
+            <div class="container engineering-note-container">
+
+                <h2>Why change a working production architecture?</h2>
+
+                <p>
+                    Cliff Smith Guitar Lessons is a live WordPress business website running on
+                    AWS Lightsail in eu-west-2. The architecture already included monitoring,
+                    alerting, automated snapshots and a tested recovery process.
+                </p>
+
+                <p>
+                    The security work was prompted by a period of production instability and
+                    sustained hostile traffic. WordPress was recording continual automated
+                    login attempts while the server experienced outages that required repeated
+                    investigation and manual intervention.
+                </p>
+
+                <p>
+                    The Lightsail instance was eventually increased from 1 GB to 2 GB to provide
+                    additional operating headroom. The 1 GB instance had previously handled the
+                    normal workload without difficulty, so simply increasing capacity did not
+                    address the unwanted traffic reaching WordPress.
+                </p>
+
+                <p>
+                    Limit Login Attempts Reloaded had recorded 5,487 login lockouts, with repeated
+                    attempts from distributed IP addresses using commonly guessed and generated
+                    usernames. While this did not prove that every outage was caused by brute-force
+                    traffic, it demonstrated the level of automated activity reaching the application.
+                </p>
+
+                <p class="engineering-note-callout">
+                    Rather than continuing to scale the origin to absorb unwanted traffic, the goal
+                    became to filter more of it at the edge before it reached WordPress.
+                </p>
+
+                <p>
+                    At the same time, domain registration and DNS were fragmented across Xilo,
+                    Cloudflare and AWS, and the Lightsail server remained directly reachable from
+                    the internet. The migration therefore combined infrastructure consolidation
+                    with a stronger security layer in front of the existing application.
+                </p>
+
+                <!-- BEFORE ARCHITECTURE IMAGE -->
+
+                <div class="engineering-note-inline-image">
+
+                    <a href="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-before-cloudfront-waf.png"
+                        class="lightbox-trigger">
+
+                        <img src="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-before-cloudfront-waf.png"
+                            alt="CSGL production architecture before CloudFront and AWS WAF were added">
+
+                    </a>
+
+                    <p class="engineering-note-image-caption">
+                        Production architecture before the migration. Public traffic reached the
+                        Lightsail origin directly, while domain and DNS responsibilities were split
+                        across Xilo, Cloudflare and AWS.
+                    </p>
+
+                </div>
+
+                <h2>Consolidating the domains and DNS</h2>
+
+                <p>
+                    Both cliffsmithguitarlessons.co.uk and cliffsmithguitarlessons.com were
+                    transferred from Xilo to Amazon Route 53 Domains. The .co.uk transfer required
+                    the UK-specific IPS tag process and was ultimately completed through Nominet
+                    self-service after delays with the previous registrar.
+                </p>
+
+                <p>
+                    Route 53 became authoritative for DNS and the remaining Cloudflare zone was
+                    removed, eliminating both Xilo and Cloudflare from the production domain
+                    architecture.
+                </p>
+
+                <h2>Preserving business email during the DNS migration</h2>
+
+                <p>
+                    Moving DNS for a production website is not only about the website. The hosted
+                    zone also contained records required by other business services.
+                </p>
+
+                <p>
+                    These included:
+                </p>
+
+                <ul>
+                    <li>Google Workspace MX records</li>
+                    <li>SPF</li>
+                    <li>Google DKIM</li>
+                    <li>Mailchimp DKIM</li>
+                    <li>DMARC</li>
+                    <li>Google verification records</li>
+                    <li>ACM validation records</li>
+                </ul>
+
+                <p>
+                    Preserving these records was an important part of the migration. A DNS change
+                    could leave the website functioning normally while silently breaking business
+                    email or domain verification.
+                </p>
+
+                <h2>Keeping the .com redirect separate</h2>
+
+                <p>
+                    The secondary cliffsmithguitarlessons.com domain continues to redirect
+                    permanently to the .co.uk site.
+                </p>
+
+                <p>
+                    This remains a separate CloudFront redirect path. Requests to the .com domain
+                    are resolved through Route 53 and returned as a 301 redirect to the primary
+                    .co.uk domain.
+                </p>
+
+                <p>
+                    Keeping this separate from the WordPress CloudFront distribution avoids mixing
+                    two different functions: serving the production application and redirecting the
+                    secondary domain.
+                </p>
+
+                <h2>Putting CloudFront in front of WordPress</h2>
+
+                <p>
+                    A new CloudFront distribution was created for the production WordPress site.
+                    Route 53 now sends traffic for cliffsmithguitarlessons.co.uk and
+                    www.cliffsmithguitarlessons.co.uk to CloudFront rather than directly to the
+                    Lightsail static IP.
+                </p>
+
+                <p>
+                    An ACM certificate in us-east-1 provides viewer-side HTTPS.
+                </p>
+
+                <p class="engineering-note-callout">
+                    Visitor → Route 53 → CloudFront + AWS WAF → Lightsail WordPress
+                </p>
+
+                <h2>Creating a dedicated origin hostname</h2>
+
+                <p>
+                    CloudFront connects to the server through a dedicated Route 53 hostname:
+                </p>
+
+                <p class="engineering-note-callout">
+                    origin.cliffsmithguitarlessons.co.uk
+                </p>
+
+                <p>
+                    The hostname resolves to the Lightsail static IP, separating the public website
+                    address from the hostname CloudFront uses to reach the origin.
+                </p>
+
+                <h2>Troubleshooting the CloudFront 502</h2>
+
+                <p>
+                    Initial CloudFront tests returned a 502 Bad Gateway. The viewer-side CloudFront
+                    certificate was valid, so the problem was traced to the HTTPS connection between
+                    CloudFront and Lightsail.
+                </p>
+
+                <p>
+                    The existing Let's Encrypt certificate covered the apex and www hostnames but
+                    not the new origin.cliffsmithguitarlessons.co.uk hostname. Certbot was used to
+                    add the origin hostname, and Apache was updated accordingly:
+                </p>
+
+                <pre><code>ServerName cliffsmithguitarlessons.co.uk
+ServerAlias www.cliffsmithguitarlessons.co.uk
+ServerAlias origin.cliffsmithguitarlessons.co.uk</code></pre>
+
+                <p>
+                    After <code>sudo apache2ctl configtest</code> returned <code>Syntax OK</code>,
+                    Apache was reloaded and CloudFront successfully connected to the origin.
+                </p>
+
+                <p>
+                    The incident highlighted an important distinction: Browser ↔ CloudFront and
+                    CloudFront ↔ Lightsail are separate TLS connections. A valid CloudFront
+                    certificate does not guarantee that origin-side HTTPS is configured correctly.
+                </p>
+
+                <h2>Preventing direct origin bypass</h2>
+
+                <p>
+                    CloudFront and WAF would provide limited protection if requests could simply
+                    bypass them and reach the Lightsail origin directly.
+                </p>
+
+                <p>
+                    CloudFront was therefore configured to send a secret custom HTTP header with
+                    origin requests, while Apache rejects requests to the origin hostname when the
+                    expected header is absent.
+                </p>
+
+                <ul>
+                    <li>Direct origin request → 403 Forbidden</li>
+                    <li>Request through CloudFront → WordPress loads normally</li>
+                </ul>
+
+                <p>
+                    The secret header value is deliberately not documented publicly.
+                </p>
+
+                <h2>Cutting production traffic over to CloudFront</h2>
+
+                <p>
+                    Once CloudFront-to-origin communication was working correctly, the Route 53
+                    record for cliffsmithguitarlessons.co.uk was changed from a direct address
+                    pointing at the Lightsail static IP to an Alias A record pointing at the
+                    CloudFront distribution.
+                </p>
+
+                <p>
+                    The www hostname was also routed through CloudFront.
+                </p>
+
+                <p>
+                    After the cutover I tested the production application rather than assuming that
+                    a working homepage meant the migration was complete.
+                </p>
+
+                <ul>
+                    <li>Homepage</li>
+                    <li>HTTPS</li>
+                    <li>www hostname</li>
+                    <li>Normal WordPress pages</li>
+                    <li>WordPress admin and login</li>
+                    <li>Contact form</li>
+                </ul>
+
+                <p>
+                    All continued to function through CloudFront.
+                </p>
+
+                <h2>Why caching was disabled initially</h2>
+
+                <p>
+                    CloudFront was introduced primarily as an edge and security layer rather than
+                    for caching. CSGL is a dynamic WordPress application with login, admin and form
+                    functionality, so introducing caching rules during the same production change
+                    would have added unnecessary risk.
+                </p>
+
+                <p>
+                    The initial distribution therefore uses CachingDisabled. Selective caching can
+                    be introduced later if there is a genuine performance requirement.
+                </p>
+
+                <h2>Adding AWS WAF</h2>
+
+                <p>
+                    AWS WAF was associated with the CloudFront distribution so matching malicious
+                    requests can be blocked before they reach WordPress, Apache or PHP.
+                </p>
+
+                <p>
+                    WAF was initially deployed in monitor mode. After testing the homepage, normal
+                    pages, WordPress login, admin functionality and contact form, monitor mode was
+                    disabled and blocking became active.
+                </p>
+
+                <p>
+                    If monitoring shows that origin load returns to its previous normal level, I
+                    can evaluate whether the Lightsail instance can be reduced from 2 GB back to
+                    1 GB. The aim is to size the server for legitimate traffic rather than increase
+                    capacity indefinitely to absorb unwanted requests.
+                </p>
+
+                <h2>The resulting architecture</h2>
+
+                <p>
+                    The migration changed the public edge of the architecture without replacing
+                    the existing Lightsail workload, monitoring, alerting or backup systems.
+                </p>
+
+                <ul>
+                    <li>Domains and authoritative DNS consolidated in Route 53</li>
+                    <li>Cloudflare and Xilo removed from the production architecture</li>
+                    <li>Public .co.uk traffic routed through CloudFront and AWS WAF</li>
+                    <li>ACM used for viewer-side HTTPS</li>
+                    <li>Dedicated HTTPS origin hostname protected by a secret CloudFront header</li>
+                    <li>Existing .com 301 redirect retained on its separate CloudFront distribution</li>
+                </ul>
+
+                <h2>Conclusion</h2>
+
+                <p>
+                    This work extended an existing production architecture rather than rebuilding it from scratch.
+                    The existing WordPress, monitoring and recovery architecture remained in place
+                    while DNS management, edge security and origin protection were strengthened
+                    around it.
+                </p>
+
+                <p>
+                    The two main technical lessons were the importance of treating viewer and origin
+                    TLS separately, and ensuring that CloudFront/WAF cannot simply be bypassed by
+                    connecting directly to the origin. Just as importantly, the migration was staged
+                    and tested while the website remained a live business service.
+                </p>
+
+                <!-- RELATED PROJECT -->
+
+                <h2>Related project</h2>
+
+                <p class="engineering-note-callout">
+                    This work extends the production architecture originally implemented in the
+                    <a href="../projects/designing-a-recoverable-wordpress-architecture-on-amazon-lightsail.html">
+                        Designing a Recoverable WordPress Architecture on Amazon Lightsail
+                    </a>
+                    project.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+        <div class="container footer-content">
+
+            <div class="footer-contact">
+
+                <p class="footer-heading">Contact</p>
+
+                <div class="footer-links">
+
+                    <a href="mailto:mailcliffsmith@gmail.com">
+                        Email
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/cliff-smith-london/" target="_blank" rel="noopener noreferrer">
+                        LinkedIn
+                    </a>
+
+                    <a href="https://github.com/cliffable" target="_blank" rel="noopener noreferrer">
+                        GitHub
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="footer-meta">
+                <p>© 2026 Cliff Smith</p>
+            </div>
+
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+
+    <div id="lightbox" class="lightbox">
+        <img id="lightbox-img" src="" alt="">
+    </div>
+
+    <script>
+
+        const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+
+        const lightbox = document.getElementById('lightbox');
+
+        const lightboxImg = document.getElementById('lightbox-img');
+
+        lightboxTriggers.forEach(trigger => {
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+
+                lightbox.style.display = 'flex';
+
+                lightboxImg.src = trigger.href;
+
+            });
+
+        });
+
+        lightbox.addEventListener('click', () => {
+
+            lightbox.style.display = 'none';
+
+            lightboxImg.src = '';
+
+        });
+
+    </script>
+
+</body>
+
+</html>

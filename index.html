@@ -83,7 +83,8 @@
 
           <a href="https://www.credly.com/earner/earned/badge/1a7ef8b3-435f-48dd-a5d9-94c44bfed6a7" target="_blank"
             rel="noopener noreferrer">
-            <img src="/assets/images/certifications/aws-certified-cloud-practitioner.png" alt="AWS Certified Cloud Practitioner badge">
+            <img src="/assets/images/certifications/aws-certified-cloud-practitioner.png"
+              alt="AWS Certified Cloud Practitioner badge">
           </a>
 
           <p>
@@ -103,18 +104,20 @@
         <h2>Featured AWS Projects</h2>
 
         <div class="featured-projects-grid">
-          <!-- Project 1 -->
-          <a href="/projects/server-based-to-serverless-website-hosting-on-aws.html" class="project-card-link">
-            <div class="project-card">
-              <h4>Server-Based to Serverless Website Hosting</h4>
 
-              <img src="/assets/images/projects/server-based-to-serverless-website-hosting-on-aws/server-based-website-architecture.png"
-                alt="Highly available AWS website architecture using CloudFront, an Application Load Balancer, Auto Scaling and EC2 instances across two Availability Zones">
+          <!-- Project 1 -->
+          <a href="/projects/csgl-lightsail-wordpress.html" class="project-card-link">
+            <div class="project-card">
+              <h4>WordPress on AWS Lightsail</h4>
+
+              <img
+                src="/assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
+                alt="Production WordPress architecture using Route 53, CloudFront, AWS WAF and Amazon Lightsail">
 
               <p>
-                Built a highly available EC2-based website with multi-AZ networking, load balancing,
-                Auto Scaling and serverless microservices, then migrated the static frontend to
-                Amazon S3 and CloudFront to reduce complexity and operational overhead.
+                Migrated a live business website to AWS Lightsail and developed the platform through real production
+                incidents, adding automated recovery, monitoring, Route 53, CloudFront, AWS WAF and protected origin
+                access.
               </p>
             </div>
           </a>
@@ -155,7 +158,54 @@
 
         <div class="homepage-engineering-notes">
 
-          <!-- Field Note 1 -->
+          <!-- Engineering Note 1 -->
+
+          <article class="engineering-note-card">
+
+            <div class="engineering-note-thumbnail">
+
+              <a href="/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf.html">
+
+                <img
+                  src="/assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
+                  alt="Current CSGL production architecture showing Route 53, CloudFront, AWS WAF and a protected AWS Lightsail WordPress origin">
+
+              </a>
+
+              <p class="engineering-note-date">
+                Published 4 September 2026
+              </p>
+
+            </div>
+
+            <div class="engineering-note-content">
+
+              <p class="engineering-note-meta">
+                AWS • Security • Operations
+              </p>
+
+              <h2>
+                <a href="/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf.html">
+                  Migrating a Production WordPress Site to CloudFront and AWS WAF
+                </a>
+              </h2>
+
+              <p class="engineering-note-summary">
+                How production instability and sustained hostile traffic led to a migration behind CloudFront and AWS
+                WAF,
+                with Route 53 consolidation, protected origin access and staged production testing.
+              </p>
+
+              <a href="/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf.html"
+                class="engineering-note-link">
+                Read note →
+              </a>
+
+            </div>
+
+          </article>
+
+          <!-- Engineering Note 2 -->
 
           <article class="engineering-note-card">
 
@@ -200,7 +250,7 @@
 
           </article>
 
-          <!-- Field Note 2 -->
+          <!-- Engineering Note 3 -->
 
           <article class="engineering-note-card">
 
@@ -245,7 +295,7 @@
 
           </article>
 
-          <!-- Field Note 3 -->
+          <!-- Engineering Note 4 -->
 
           <article class="engineering-note-card">
 
@@ -290,50 +340,6 @@
 
           </article>
 
-          <!-- Field Note 4 -->
-
-          <article class="engineering-note-card">
-
-            <div class="engineering-note-thumbnail">
-
-              <a href="/engineering-notes/when-a-1gb-lightsail-instance-wasnt-enough.html">
-
-                <img
-                  src="/assets/images/engineering-notes/when-a-1gb-lightsail-instance-wasnt-enough/cpu-spike-before-instance-upgrade.png"
-                  alt="AWS Lightsail CPU usage spike before an instance upgrade">
-
-              </a>
-
-              <p class="engineering-note-date">
-                Published 31 May 2026
-              </p>
-
-            </div>
-
-            <div class="engineering-note-content">
-
-              <p class="engineering-note-meta">
-                AWS • Lightsail • Operations
-              </p>
-
-              <h2>
-                <a href="/engineering-notes/when-a-1gb-lightsail-instance-wasnt-enough.html">
-                  When a 1GB Lightsail Instance Wasn't Enough
-                </a>
-              </h2>
-
-              <p class="engineering-note-summary">
-                How a production outage and memory exhaustion revealed the limitations of a 1 GB Lightsail instance and
-                led to an infrastructure upgrade.
-              </p>
-
-              <a href="/engineering-notes/when-a-1gb-lightsail-instance-wasnt-enough.html"
-                class="engineering-note-link">
-                Read note →
-              </a>
-
-            </div>
-
         </div>
 
         <div style="margin-top: 32px;">
@@ -348,8 +354,8 @@
         <h3>About</h3>
 
         <div class="about-content">
-          <img src="/assets/images/profile/cliff-smith-headshot.jpg" alt="Cliff Smith cloud engineering portfolio headshot"
-            class="about-photo">
+          <img src="/assets/images/profile/cliff-smith-headshot.jpg"
+            alt="Cliff Smith cloud engineering portfolio headshot" class="about-photo">
 
           <div class="about-text">
             <p>
