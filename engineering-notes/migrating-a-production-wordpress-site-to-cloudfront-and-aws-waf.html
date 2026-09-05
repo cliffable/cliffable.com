@@ -411,10 +411,45 @@ ServerAlias origin.cliffsmithguitarlessons.co.uk</code></pre>
                 </p>
 
                 <p>
+                    Production testing also exposed legitimate WordPress admin requests being
+                    blocked by the AWS Managed Common Rule Set. WAF logs traced the failures on
+                    <code>wp-admin/admin-ajax.php</code> to the
+                    <code>SizeRestrictions_BODY</code> and
+                    <code>CrossSiteScripting_BODY</code> rules.
+                </p>
+
+                <p>
+                    Rather than disabling the managed ruleset, only these two rules were changed
+                    to Count. This restored WordPress admin functionality while leaving the
+                    remainder of the managed protection in blocking mode.
+                </p>
+
+                <p>
                     If monitoring shows that origin load returns to its previous normal level, I
                     can evaluate whether the Lightsail instance can be reduced from 2 GB back to
                     1 GB. The aim is to size the server for legitimate traffic rather than increase
                     capacity indefinitely to absorb unwanted requests.
+                </p>
+
+                <h2>Extending production monitoring</h2>
+
+                <p>
+                    Monitoring was extended to cover failures that basic endpoint monitoring
+                    might miss. A Route 53 health check now verifies that the rendered homepage
+                    contains a WordPress-generated health marker, with CloudWatch and SNS
+                    providing alerting if the check fails.
+                </p>
+
+                <p>
+                    A separate CloudFront 5xx error-rate alarm monitors sustained server-side
+                    errors affecting real requests. Together, these checks distinguish between
+                    endpoint availability, application health and errors experienced through
+                    CloudFront.
+                </p>
+
+                <p>
+                    The application health check was deliberately failed and restored to verify
+                    the complete Route 53 → CloudWatch → SNS alerting path.
                 </p>
 
                 <h2>The resulting architecture</h2>
@@ -431,6 +466,8 @@ ServerAlias origin.cliffsmithguitarlessons.co.uk</code></pre>
                     <li>ACM used for viewer-side HTTPS</li>
                     <li>Dedicated HTTPS origin hostname protected by a secret CloudFront header</li>
                     <li>Existing .com 301 redirect retained on its separate CloudFront distribution</li>
+                    <li>AWS WAF managed rules tuned to avoid blocking legitimate WordPress admin traffic</li>
+                    <li>Application health and CloudFront 5xx monitoring integrated with CloudWatch and SNS</li>
                 </ul>
 
                 <h2>Conclusion</h2>

@@ -353,38 +353,45 @@
 
         </div>
 
-<h2>Project Update — September 2026</h2>
+        <h2>Project Update — September 2026</h2>
 
-<div class="content-block">
+        <div class="content-block">
 
-  <p>
-    Following further production instability and sustained automated login attempts, the architecture was
-    extended to reduce direct exposure of the WordPress server.
-  </p>
+          <p>
+            Following further production instability and sustained automated login attempts, the architecture was
+            extended to reduce direct exposure of the WordPress server.
+          </p>
 
-  <div class="project-architecture">
-    <a href="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
-      class="lightbox-trigger">
-      <img
-        src="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
-        alt="Current CSGL production architecture using Route 53, CloudFront, AWS WAF and a protected Lightsail WordPress origin"
-        class="architecture-diagram">
-    </a>
-  </div>
+          <div class="project-architecture">
+            <a href="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
+              class="lightbox-trigger">
+              <img
+                src="../assets/images/engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf/csgl-production-architecture-cloudfront-waf.png"
+                alt="Current CSGL production architecture using Route 53, CloudFront, AWS WAF and a protected Lightsail WordPress origin"
+                class="architecture-diagram">
+            </a>
+          </div>
 
-  <p>
-    Domain and DNS management are now consolidated in Route 53, with public traffic passing through
-    CloudFront and AWS WAF. The Lightsail origin is protected against direct access using a dedicated
-    origin hostname and secret CloudFront header.
-  </p>
+          <p>
+            Domain and DNS management are now consolidated in Route 53, with public traffic passing through
+            CloudFront and AWS WAF. The Lightsail origin is protected against direct access using a dedicated
+            origin hostname and secret CloudFront header. WAF managed rules were tuned after production
+            testing identified legitimate WordPress admin requests being blocked.
+          </p>
 
-  <p>
-    <a href="../engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf.html">
-      Read: Migrating a Production WordPress Site to CloudFront and AWS WAF →
-    </a>
-  </p>
+          <p>
+            Monitoring was also extended with an application-level Route 53 health check and a separate
+            CloudFront 5xx error-rate alarm, integrated with CloudWatch and SNS. End-to-end alerting was
+            validated using controlled failure testing.
+          </p>
 
-</div>
+          <p>
+            <a href="../engineering-notes/migrating-a-production-wordpress-site-to-cloudfront-and-aws-waf.html">
+              Read: Migrating a Production WordPress Site to CloudFront and AWS WAF →
+            </a>
+          </p>
+
+        </div>
 
       </div>
     </section>
