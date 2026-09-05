@@ -356,7 +356,32 @@ ServerAlias origin.cliffsmithguitarlessons.co.uk</code></pre>
                 </ul>
 
                 <p>
-                    All continued to function through CloudFront.
+                    Initial testing succeeded, but a subsequent redirect loop exposed an incorrect
+                    CloudFront origin request policy. WordPress was redirecting the public hostname
+                    back to itself because the expected viewer request data was not reaching the origin.
+                </p>
+
+                <p>
+                    Forwarding only the Host header fixed the redirect loop but broke WordPress
+                    authentication, including OTP login. The final configuration therefore uses the
+                    managed <code>AllViewer</code> origin request policy with
+                    <code>CachingDisabled</code>, allowing the dynamic WordPress application to receive
+                    the viewer request data it requires without introducing edge caching.
+                </p>
+
+                <p>
+                    The incident also exposed a weakness in my original validation process. During the
+                    migration, seeing the website load successfully was not sufficient evidence that the
+                    request had actually followed the intended CloudFront path. Browser and DNS caching
+                    can obscure a recent DNS change, while a redirect can move a test request onto a
+                    different path entirely.
+                </p>
+
+                <p>
+                    I therefore repeated the validation with <code>curl -I</code>, checking both the
+                    HTTP status and the response headers. A <code>200</code> response together with the
+                    CloudFront <code>Via</code> header confirmed that the production hostname was
+                    successfully being served through CloudFront rather than reaching Lightsail directly.
                 </p>
 
                 <h2>Why caching was disabled initially</h2>
@@ -381,9 +406,8 @@ ServerAlias origin.cliffsmithguitarlessons.co.uk</code></pre>
                 </p>
 
                 <p>
-                    WAF was initially deployed in monitor mode. After testing the homepage, normal
-                    pages, WordPress login, admin functionality and contact form, monitor mode was
-                    disabled and blocking became active.
+                    WAF was initially deployed in monitor mode. After production functionality was
+                    tested, monitor mode was disabled and blocking became active.
                 </p>
 
                 <p>
@@ -419,10 +443,11 @@ ServerAlias origin.cliffsmithguitarlessons.co.uk</code></pre>
                 </p>
 
                 <p>
-                    The two main technical lessons were the importance of treating viewer and origin
-                    TLS separately, and ensuring that CloudFront/WAF cannot simply be bypassed by
-                    connecting directly to the origin. Just as importantly, the migration was staged
-                    and tested while the website remained a live business service.
+                    The main technical lessons were the importance of treating viewer and origin TLS
+                    separately, preventing direct origin bypass, and correctly forwarding viewer
+                    requests when placing a dynamic WordPress application behind CloudFront. Just as
+                    importantly, the migration was staged and tested while the website remained a
+                    live business service.
                 </p>
 
                 <!-- RELATED PROJECT -->
