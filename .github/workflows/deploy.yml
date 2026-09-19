@@ -19,6 +19,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check live pages for accidental noindex
+        run: |
+          if grep -R "noindex" --include="*.html" --exclude-dir="templates" .; then
+            echo "ERROR: noindex found on a live HTML page."
+            exit 1
+          fi
+
       - name: Generate sitemap
         run: python3 scripts/generate-sitemap.py
 
