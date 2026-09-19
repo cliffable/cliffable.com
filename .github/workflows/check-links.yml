@@ -1,0 +1,17 @@
+name: Check broken links
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1"
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check links on cliffable.com
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --verbose --exclude 'linkedin\.com' https://cliffable.com
+          fail: true
