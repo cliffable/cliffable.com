@@ -313,46 +313,6 @@
 
         </div>
 
-        <h2>Cost</h2>
-
-        <div class="content-block">
-          <p><strong>Typical steady-state infrastructure cost:</strong> ~$6–8/month</p>
-
-          <ul>
-            <li>Lightsail 2 GB instance → ~$7/month (+ VAT)</li>
-            <li>Route 53 → ~$0.51/month</li>
-          </ul>
-
-          <p>
-            Equivalent AWS cost: approximately £6–7/month including VAT, depending on exchange rates and snapshot usage.
-          </p>
-
-          <p><strong>Previous hosting cost:</strong> £94.80/month (incl. VAT)</p>
-          <p><strong>Cost reduction:</strong> ~92–94%</p>
-
-        </div>
-
-        <h2>Outcome</h2>
-
-        <div class="content-block">
-
-          <p>
-            The project successfully moved a live business website from managed hosting to AWS and developed into
-            a production platform with automated recovery, monitoring and security controls.
-          </p>
-
-          <ul>
-            <li>Production WordPress hosting on AWS Lightsail</li>
-            <li>~92–94% lower hosting cost than the previous managed hosting</li>
-            <li>Automated snapshots and tested recovery workflows</li>
-            <li>Route 53 health checks, CloudWatch monitoring and SNS alerts</li>
-            <li>Migration from the deprecated Bitnami stack to the official Lightsail WordPress blueprint</li>
-            <li>Domain and DNS management consolidated in Route 53</li>
-            <li>CloudFront and AWS WAF added to protect the production site</li>
-          </ul>
-
-        </div>
-
         <h2>Project Update — September 2026</h2>
 
         <div class="content-block">
@@ -393,7 +353,56 @@
 
         </div>
 
-      </div>
+        <h2>Cost</h2>
+
+        <div class="content-block">
+
+          <p><strong>Current production infrastructure cost:</strong> approximately $23–24/month including tax</p>
+
+          <ul>
+            <li>Lightsail → $17.95/month</li>
+            <li>Route 53 → $1.60/month</li>
+            <li>S3 → ~$0.01/month</li>
+            <li>CloudFront, CloudWatch, Lambda and SNS → currently within free or included usage</li>
+          </ul>
+
+          <p>
+            The September 2026 AWS bill was $19.56 before tax, or $23.48 including tax.
+            This reflects the evolved production architecture, including the larger 2 GB Lightsail instance,
+            snapshots, DNS and monitoring infrastructure.
+          </p>
+
+          <p><strong>Previous managed hosting cost:</strong> £94.80/month (incl. VAT)</p>
+
+          <p>
+            Although the AWS cost has increased as the architecture has developed, it remains substantially
+            lower than the previous managed hosting service while providing greater control over hosting,
+            monitoring, recovery and security.
+          </p>
+
+        </div>
+
+        <h2>Outcome</h2>
+
+        <div class="content-block">
+
+          <p>
+            The project successfully moved a live business website from managed hosting to AWS and developed into
+            a production platform with automated recovery, monitoring and security controls.
+          </p>
+
+          <ul>
+            <li>Production WordPress hosting on AWS Lightsail</li>
+            <li>Substantially lower hosting cost than the previous managed hosting service</li>
+            <li>Automated snapshots and tested recovery workflows</li>
+            <li>Route 53 health checks, CloudWatch monitoring and SNS alerts</li>
+            <li>Migration from the deprecated Bitnami stack to the official Lightsail WordPress blueprint</li>
+            <li>Domain and DNS management consolidated in Route 53</li>
+            <li>CloudFront and AWS WAF added to protect the production site</li>
+          </ul>
+
+        </div>
+
     </section>
   </main>
 
