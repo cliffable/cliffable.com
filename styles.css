@@ -134,6 +134,12 @@ header {
 }
 
 /* CERTIFICATIONS */
+
+.certifications {
+  padding-top: 0px;
+  border-top: none;
+}
+
 .certifications-grid {
   display: flex;
   gap: 48px;
@@ -142,6 +148,11 @@ header {
 
 .certification-card {
   width: 220px;
+}
+
+.certification-card p {
+  font-size: 0.85rem;
+  margin-bottom: 10px;
 }
 
 .certification-card img {
@@ -167,6 +178,40 @@ header {
   border: 1px solid #fff;
   border-radius: 6px;
   font-weight: 600;
+}
+
+/* TRAINING & PROFESSIONAL DEVELOPMENT */
+
+.training-grid {
+  display: flex;
+  gap: 48px;
+  margin-top: 24px;
+}
+
+.training-card {
+  width: 220px;
+}
+
+.training-card img {
+  width: 120px;
+  height: auto;
+  display: block;
+  margin-bottom: 18px;
+}
+
+.training-card h3 {
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.training-card p {
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+
+.training-card > a:last-child {
+  font-size: 0.9rem;
 }
 
 /* SECTIONS */
